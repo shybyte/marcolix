@@ -1,7 +1,6 @@
 Doing:
 
 TODO:
-    * Simple TypeScript/React client
     * Check with Language Tool from server
     * Proxy the CheckResult to client
     * Simple check from client
@@ -9,3 +8,4 @@ TODO:
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
     * Simple Express Server [0:10]
+    * Simple TypeScript/React client [1:00]

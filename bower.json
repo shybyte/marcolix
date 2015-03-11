@@ -1,0 +1,21 @@
+{
+  "name": "marcolix",
+  "version": "0.0.0",
+  "homepage": "https://github.com/shybyte/marcolix",
+  "authors": [
+    "shybyte@gmail.com"
+  ],
+  "description": "Playing around with typescript, reactjs and language tool (http://wiki.languagetool.org/)",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "react": "~0.13.0"
+  }
+}
