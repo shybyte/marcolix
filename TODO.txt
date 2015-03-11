@@ -1,0 +1,11 @@
+Doing:
+
+TODO:
+    * Simple Express Server
+    * Simple TypeScript/React client
+    * Check with Language Tool from server
+    * Proxy the CheckResult to client
+    * Simple check from client
+
+Done:
+    * Setup the project (package.json, Github, ...) [0.4]
