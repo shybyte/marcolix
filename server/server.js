@@ -3,6 +3,8 @@ var http = require('http');
 var express = require('express');
 var Promise = require('bluebird');
 var request = Promise.promisify(require('request'));
+var parseXML = require('xml2js').parseString;
+var bodyParser = require('body-parser');
 
 function pathInsideProjectRoot(pathFromProjectRoot) {
   return path.join(__dirname, '..', pathFromProjectRoot);
@@ -12,6 +14,8 @@ var app = express();
 var port = 3000;
 app.set('port', port);
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(pathInsideProjectRoot('client')));
 app.use('/bower_components', express.static(pathInsideProjectRoot('bower_components')));
@@ -25,20 +29,25 @@ app.use('/api', function (req, res) {
 });
 
 
-app.use('/check', function (req, res) {
-  res.setHeader('Content-Type', 'application/json');
+function check(req, res) {
   request({
     url: 'http://localhost:8081',
     method: 'POST',
     form: {
-      language: 'EN-US',
-      text: 'errorr'
+      language: req.query.language || req.body.language,
+      text: req.query.text || req.body.text
     }
-  }).then(function (checkReportXML) {
-    console.log('checkReportXML', checkReportXML);
+  }).then(function (checkRequestResponse) {
+    var checkReportXML = checkRequestResponse[1];
+    parseXML(checkReportXML, function (err, checkReport) {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(checkReport));
+    });
   });
-  res.end(JSON.stringify({test: 'CheckResult'}));
-});
+};
+
+app.get('/check', check);
+app.post('/check', check);
 
 
 var server = http.createServer(app);

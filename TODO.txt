@@ -1,7 +1,6 @@
 Doing:
 
 TODO:
-    * Proxy the CheckResult to client as JSON
     * Simple check from client
 
 Done:
@@ -9,3 +8,4 @@ Done:
     * Simple Express Server [0:10]
     * Simple TypeScript/React client [1:00]
     * Check with Language Tool from server [0:15]
+    * Proxy the CheckResult to client as JSON [0:25]
