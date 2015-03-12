@@ -7,7 +7,9 @@
   },
   "dependencies": {
     "express": "~4.12.2",
-    "lodash": "~3.5.0"
+    "lodash": "~3.5.0",
+    "request": "~2.53.0",
+    "bluebird": "~2.9.14"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
