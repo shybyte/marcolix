@@ -1,7 +1,18 @@
 Doing:
 
 TODO:
-    * Simple check from client
+    * Simple check from client (Check Button, Display JSON)
+    * Display results in unexpanded card
+    * Expanded card
+    * Add markings to text
+    * Clicking in sidebar selects flag in text
+    * Replacements
+    * Check as you type (complete text)
+    * Check as you type (partial text request)
+        * Server state
+        * Send Diff
+    * Check as you type (partial check result)
+    * Fine tuning of Check as you type
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -9,3 +20,4 @@ Done:
     * Simple TypeScript/React client [1:00]
     * Check with Language Tool from server [0:15]
     * Proxy the CheckResult to client as JSON [0:25]
+    * Made a plan [0:05]
