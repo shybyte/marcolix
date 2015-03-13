@@ -1,8 +1,7 @@
 Doing:
-
+    * Display results in unexpanded card [1:00]
 
 TODO:
-    * Display results in unexpanded card
     * Expanded card
     * Add markings to text
     * Clicking in sidebar selects flag in text

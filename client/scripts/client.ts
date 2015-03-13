@@ -12,9 +12,13 @@ module marcolix {
   export class MainComponent extends React.Component<any,AppState> {
     state = {
       sidebarProps: {
-        checkReport: {test: 123},
+        checkReport: null,
         ref: 'sidebar'
       }
+    }
+
+    componentDidMount() {
+      this.onCheckButton();
     }
 
     onCheckButton() {

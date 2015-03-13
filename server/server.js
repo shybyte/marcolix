@@ -5,6 +5,7 @@ var Promise = require('bluebird');
 var request = Promise.promisify(require('request'));
 var parseXML = require('xml2js').parseString;
 var bodyParser = require('body-parser');
+var _ = require('lodash');
 
 function pathInsideProjectRoot(pathFromProjectRoot) {
   return path.join(__dirname, '..', pathFromProjectRoot);
@@ -15,7 +16,7 @@ var port = 3000;
 app.set('port', port);
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(express.static(pathInsideProjectRoot('client')));
 app.use('/bower_components', express.static(pathInsideProjectRoot('bower_components')));
@@ -23,10 +24,18 @@ app.use('/compiled', express.static(pathInsideProjectRoot('.tmp/compiled')));
 app.use('/client', express.static(pathInsideProjectRoot('client'))); // source-maps
 
 
-app.use('/api', function (req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({test: 'Hossa'}));
-});
+function convertCheckReport(checkReportLanguageTool) {
+  return {
+    issues: _.map(checkReportLanguageTool.matches.error, '$').map(function (error) {
+      return {
+        context: error.context,
+        message: error.msg,
+        surface: error.context.substr(error.contextoffset, error.errorlength),
+        replacements: error.replacements ? error.replacements.split('#') : []
+      }
+    })
+  }
+}
 
 
 function check(req, res) {
@@ -39,9 +48,10 @@ function check(req, res) {
     }
   }).then(function (checkRequestResponse) {
     var checkReportXML = checkRequestResponse[1];
-    parseXML(checkReportXML, function (err, checkReport) {
+    parseXML(checkReportXML, function (err, checkReportLanguageTool) {
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(checkReport));
+      //res.end(JSON.stringify(checkReportLanguageTool));
+      res.end(JSON.stringify(convertCheckReport(checkReportLanguageTool)));
     });
   });
 };
