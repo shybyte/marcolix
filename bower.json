@@ -16,6 +16,7 @@
     "tests"
   ],
   "dependencies": {
-    "react": "~0.13.0"
+    "react": "~0.13.0",
+    "reqwest": "~1.1.5"
   }
 }

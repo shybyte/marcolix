@@ -1,7 +1,7 @@
 Doing:
 
+
 TODO:
-    * Simple check from client (Check Button, Display JSON)
     * Display results in unexpanded card
     * Expanded card
     * Add markings to text
@@ -21,3 +21,4 @@ Done:
     * Check with Language Tool from server [0:15]
     * Proxy the CheckResult to client as JSON [0:25]
     * Made a plan [0:05]
+    * Simple check from client (Check Button, Display JSON) [2:30]

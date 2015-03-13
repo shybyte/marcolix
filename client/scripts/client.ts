@@ -1,13 +1,46 @@
+/// <reference path="editor" />
+/// <reference path="sidebar" />
+
 module marcolix {
   var div = React.createFactory('div');
+  var button = React.createFactory('button');
 
-  export class TestComponent extends React.Component<any,any> {
-    render () {
-      return div({},'TestComponent');
+  interface AppState {
+    sidebarProps: SidebarProps
+  }
+
+  export class MainComponent extends React.Component<any,AppState> {
+    state = {
+      sidebarProps: {
+        checkReport: {test: 123},
+        ref: 'sidebar'
+      }
+    }
+
+    onCheckButton() {
+      var editor = <EditorComponent> this.refs['editor'];
+      service.check(editor.getText()).then((checkReport) => {
+        this.setState({
+            sidebarProps: {
+              checkReport: checkReport
+            }
+          }
+        )
+      });
+    }
+
+    render() {
+      return div({},
+        button({className: 'checkButton', onClick: this.onCheckButton.bind(this)}, 'Check'),
+        div({},
+          div({className: 'editorCol'}, Editor({ref: 'editor'})),
+          div({className: 'sidebarCol'}, Sidebar(this.state.sidebarProps))
+        )
+      );
     }
   }
 
-  React.render(React.createElement(marcolix.TestComponent), document.getElementById('app'))
+  React.render(React.createElement(MainComponent), document.getElementById('app'))
 
 }
 
