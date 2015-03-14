@@ -1,5 +1,5 @@
 Doing:
-    * Display results in unexpanded card [1:00]
+    * Show replacement menu on mouse over first replacement
 
 TODO:
     * Expanded card
@@ -12,6 +12,7 @@ TODO:
         * Send Diff
     * Check as you type (partial check result)
     * Fine tuning of Check as you type
+    * Handle Whitespace in Replacements
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -21,3 +22,4 @@ Done:
     * Proxy the CheckResult to client as JSON [0:25]
     * Made a plan [0:05]
     * Simple check from client (Check Button, Display JSON) [2:30]
+    * Display results in unexpanded card [1:00]

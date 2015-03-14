@@ -1,19 +1,30 @@
 .sidebar {
-  border: 1px solid silver;
+  //border: 1px solid silver;
   overflow: auto;
   padding: 1em;
 }
 
 .surface {
   color: red;
+  text-decoration: line-through;
 }
 
 .replacement {
-  color: green;
+  color: #00bb00;
+  &:hover {
+    color: #008800;
+  }
 }
 
 .arrow {
   color: #888;
   margin-left: 0.5em;
   margin-right: 0.5em;
+}
+
+.issue {
+  margin-bottom: 1.5em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
 }
