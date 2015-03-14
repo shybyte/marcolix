@@ -1,6 +1,4 @@
 .sidebar {
-  //border: 1px solid silver;
-  overflow: auto;
   padding: 1em;
 }
 
@@ -11,6 +9,7 @@
 
 .replacement {
   color: #00bb00;
+  cursor: pointer;
   &:hover {
     color: #008800;
   }
@@ -24,7 +23,41 @@
 
 .issue {
   margin-bottom: 1.5em;
-  padding-bottom: 0.3em;
+}
+
+.issueTitle {
   border-bottom: 1px solid #f0f0f0;
+  position: relative;
   cursor: pointer;
+
+  .replacement {
+    display: inline-block;
+    min-width: 5em;
+  }
+
+}
+
+.replacementsPopupContainer {
+  position: relative;
+}
+
+.replacementsPopup {
+  padding: 0 1em 0.2em 1em;
+  position: absolute;
+  top: -1px;
+  background-color: white;
+  z-index: 1;
+  border-bottom: 1px solid #f0f0f0;
+  border-left: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+  display: none;
+  &.open {
+    display: block;
+  }
+}
+
+.replacementsPopup .replacement {
+  display: block;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }

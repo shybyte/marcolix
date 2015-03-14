@@ -13,7 +13,7 @@ module marcolix {
     }
 
     componentDidMount() {
-      this.getEditableDiv().textContent = 'Ei heve cuked thiss soup forr mie.';
+      this.getEditableDiv().textContent = 'Ei heve cuked thiss soup forr mie. complicoted';
     }
 
     render() {
