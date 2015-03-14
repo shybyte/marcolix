@@ -22,4 +22,4 @@ Done:
     * Proxy the CheckResult to client as JSON [0:25]
     * Made a plan [0:05]
     * Simple check from client (Check Button, Display JSON) [2:30]
-    * Display results in unexpanded card [1:00]
+    * Display results in unexpanded card [1:15]
