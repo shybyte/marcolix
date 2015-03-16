@@ -19,9 +19,18 @@ module.exports = function (grunt) {
           atBegin: true,
           livereload: true
         },
-        files: ['client/**/*.ts'],
-        tasks: 'typescript'
+        files: ['client/**/*.ts', 'shared/**/*.ts'],
+        tasks: 'typescript:client'
+      },
+      typescriptServer: {
+        options: {
+          atBegin: true,
+          livereload: true
+        },
+        files: ['server/**/*.ts', 'shared/**/*.ts'],
+        tasks: 'typescript:server'
       }
+
     },
 
     less: {
@@ -36,21 +45,32 @@ module.exports = function (grunt) {
     },
 
     typescript: {
-      base: {
-        src: ['client/scripts/**/*.ts'],
+      client: {
+        src: ['client/scripts/**/*.ts', 'shared/**/*.ts'],
         dest: '.tmp/compiled/client.js',
         options: {
           target: 'es5',
           sourceMap: true
         }
+      },
+      server: {
+        src: ['server/**/*.ts', 'shared/**/*.ts'],
+        dest: '.tmp/compiled/server',
+        options: {
+          basePath: 'server',
+          target: 'es5',
+          module: 'commonjs',
+          sourceMap: true
+        }
       }
+
     },
 
     nodemon: {
       dev: {
-        script: 'server/server.js',
+        script: './.tmp/compiled/server/server.js',
         options: {
-          watch: ['server/**/*']
+          watch: ['./.tmp/compiled/server']
         }
       }
     },
@@ -78,4 +98,6 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['build', 'serve']);
   grunt.registerTask('build', ['bower:install', 'less:dev']);
   grunt.registerTask('serve', ['concurrent']);
+
+  grunt.registerTask('ts', ['typescript:server']);
 };

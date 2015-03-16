@@ -1,4 +1,4 @@
-module marcolix {
+declare module marcolix {
   export interface Issue {
     surface: string;
     message: string;

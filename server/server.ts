@@ -1,14 +1,18 @@
-var path = require('path');
-var http = require('http');
-var express = require('express');
-var Promise = require('bluebird');
-var request = Promise.promisify(require('request'));
-var parseXML = require('xml2js').parseString;
-var bodyParser = require('body-parser');
-var _ = require('lodash');
+import path = require('path');
+import http = require('http');
+import express = require('express');
+import Promise = require('bluebird');
+import requestModule = require('request');
+import parseXmlModule = require('xml2js');
+import bodyParser = require('body-parser');
+import _ = require('lodash');
+// type case just to make webstorm happy
+var request = <(any) => any> Promise.promisify(requestModule);
+var parseXML = parseXmlModule.parseString;
 
 function pathInsideProjectRoot(pathFromProjectRoot) {
-  return path.join(__dirname, '..', pathFromProjectRoot);
+  var absolutePath = path.join(__dirname, '../../..', pathFromProjectRoot);
+  return absolutePath;
 }
 
 var app = express();
@@ -24,9 +28,9 @@ app.use('/compiled', express.static(pathInsideProjectRoot('.tmp/compiled')));
 app.use('/client', express.static(pathInsideProjectRoot('client'))); // source-maps
 
 
-function convertCheckReport(checkReportLanguageTool) {
+function convertCheckReport(checkReportLanguageTool):marcolix.CheckReport {
   return {
-    issues: _.map(checkReportLanguageTool.matches.error, '$').map(function (error) {
+    issues: _.map(checkReportLanguageTool.matches.error, '$').map(function (error:languageTool.Error) {
       return {
         context: error.context,
         message: error.msg,
