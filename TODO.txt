@@ -1,6 +1,5 @@
 Doing:
 
-
 TODO:
     * Expanded card
     * Add markings to text
@@ -26,3 +25,4 @@ Done:
     * Display results in unexpanded card [1:15]
     * Show replacement menu on mouse over first replacement [2:30]
     * Switched server code to typescript and added shared source directory (1:00)
+    * Handle white spaces in begin of an issue by adding the preceding word [0:45]

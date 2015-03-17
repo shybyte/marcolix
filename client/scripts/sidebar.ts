@@ -7,6 +7,13 @@ module marcolix {
     issue: Issue
   }
 
+  function makeSuffixPrefixWhiteSpaceVisible(s: string) {
+    if (/^\s|\s$/.test(s)) {
+      return '"' + s + '"';
+    } else {
+      return s;
+    }
+  }
 
   class IssueComponent extends React.Component<IssueComponentProps,any> {
     state = {
@@ -42,7 +49,7 @@ module marcolix {
       return div({className: 'issue', title: this.props.issue.message},
         div({className: 'issueTitle'},
           span({className: 'surface'},
-            issue.surface),
+            makeSuffixPrefixWhiteSpaceVisible(issue.surface)),
           issue.replacements.length > 0 ?
             span({},
               span({className: 'arrow'}, '\u2192'),
@@ -52,7 +59,7 @@ module marcolix {
                   onMouseOver: this.onMouseOverReplacementInTitle,
                   onMouseOut: this.onMouseOutReplacementInTitle
                 },
-                issue.replacements[0])
+                makeSuffixPrefixWhiteSpaceVisible(issue.replacements[0]))
             ) : null),
         issue.replacements.length > 1 ? div({className: 'replacementsPopupContainer'},
           div({
@@ -66,7 +73,7 @@ module marcolix {
             },
             issue.replacements.slice(1, 5).map((replacement, i) =>
                 span({className: 'replacement', key: i},
-                  replacement
+                  makeSuffixPrefixWhiteSpaceVisible(replacement)
                 )
             )
           )
@@ -96,5 +103,7 @@ module marcolix {
   }
 
   export var Sidebar = React.createFactory(SidebarComponent);
+
+  window['makeSuffixPrefixWhiteSpaceVisible'] = makeSuffixPrefixWhiteSpaceVisible;
 
 }

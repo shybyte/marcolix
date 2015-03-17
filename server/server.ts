@@ -6,6 +6,8 @@ import requestModule = require('request');
 import parseXmlModule = require('xml2js');
 import bodyParser = require('body-parser');
 import _ = require('lodash');
+import convertCheckReportModule = require('./report');
+var convertCheckReport = convertCheckReportModule.convertCheckReport;
 // type case just to make webstorm happy
 var request = <(any) => any> Promise.promisify(requestModule);
 var parseXML = parseXmlModule.parseString;
@@ -26,21 +28,6 @@ app.use(express.static(pathInsideProjectRoot('client')));
 app.use('/bower_components', express.static(pathInsideProjectRoot('bower_components')));
 app.use('/compiled', express.static(pathInsideProjectRoot('.tmp/compiled')));
 app.use('/client', express.static(pathInsideProjectRoot('client'))); // source-maps
-
-
-function convertCheckReport(checkReportLanguageTool):marcolix.CheckReport {
-  return {
-    issues: _.map(checkReportLanguageTool.matches.error, '$').map(function (error:languageTool.Error) {
-      return {
-        context: error.context,
-        message: error.msg,
-        surface: error.context.substr(error.contextoffset, error.errorlength),
-        replacements: error.replacements ? error.replacements.split('#') : []
-      }
-    })
-  }
-}
-
 
 function check(req, res) {
   request({
