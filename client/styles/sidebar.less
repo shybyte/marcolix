@@ -22,7 +22,9 @@
 }
 
 .issue {
-  margin-bottom: 1.5em;
+  margin-bottom: 1em;
+  padding: 0.5em;
+  border-radius: 10px;
 }
 
 .issueTitle {
@@ -35,6 +37,41 @@
     min-width: 5em;
   }
 
+  transition: all 0.5s;
+}
+
+
+.issue:hover .issueTitle {
+  border-bottom-color: #d0d0d0;
+}
+
+.issue.expanded .issueTitle {
+  border-bottom-color: #a0a0a0;
+}
+
+.issue.expanded  {
+  box-shadow: 1px 1px 8px #e0e0e0;
+  background-color: #f8f8f8;
+}
+
+.issueTitle .icons {
+  float: right;
+  margin-right: 5px;
+}
+
+.issueTitle .openCloseIcon {
+  width: 16px;
+  height: 16px;
+  background-image: url('../images/open.png');
+  background-size: 16px 16px;
+  transform: rotate(-0.25turn);
+  display: block;
+  opacity: 0.5;
+  transition: all 0.5s;
+}
+
+.issue.expanded .openCloseIcon {
+  transform: rotate(0turn);
 }
 
 .replacementsPopupContainer {
@@ -56,8 +93,20 @@
   }
 }
 
+.issueBody .replacement,
 .replacementsPopup .replacement {
   display: block;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
+}
+
+.issue .issueBody {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.5s;
+}
+
+.issueMessage {
+  color: #555;
+  margin: 0.5em 0;
 }

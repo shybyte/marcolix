@@ -1,13 +1,14 @@
 Doing:
 
+
 TODO:
-    * Expanded card
     * Add markings to text
     * Clicking in sidebar selects flag in text
     * Replacements
     * Check as you type (complete text)
     * Optimize Check (Caching sentences)
     * Optimize Check (Parallel check)
+    * Optimize Card Rendering / Expanded card
     * Check as you type (partial text request)
         * Server state
         * Send Diff
@@ -26,3 +27,4 @@ Done:
     * Show replacement menu on mouse over first replacement [2:30]
     * Switched server code to typescript and added shared source directory (1:00)
     * Handle white spaces in begin of an issue by adding the preceding word [0:45]
+    * Expand card [0:45]
