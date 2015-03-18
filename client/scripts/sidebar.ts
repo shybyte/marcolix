@@ -29,12 +29,17 @@ module marcolix {
 
     componentWillReceiveProps = (nextProps:IssueComponentProps) => {
       var issueBody = <HTMLElement> React.findDOMNode(this.refs['issueBody']);
-      var positionOfReplacementInTitleLeft = React.findDOMNode(this.refs['replacementInTitle'])['offsetLeft'];
       if (nextProps.expanded) {
         var issueBodyContent = <HTMLElement> React.findDOMNode(this.refs['issueBodyContent']);
         var bodyHeight = issueBodyContent.offsetHeight + 20;
         issueBody.style.maxHeight = bodyHeight + 'px';
-        this.setState({replacementsInBodyMarginLeft: positionOfReplacementInTitleLeft});
+
+        var replacementInTitle = <HTMLElement>  React.findDOMNode(this.refs['replacementInTitle']);
+        if (replacementInTitle) {
+          var positionOfReplacementInTitleLeft = replacementInTitle.offsetLeft;
+          this.setState({replacementsInBodyMarginLeft: positionOfReplacementInTitleLeft});
+        }
+
       } else {
         issueBody.style.maxHeight = '0px';
       }
@@ -42,7 +47,7 @@ module marcolix {
 
     onMouseOverReplacementInTitle = () => {
       if (this.props.expanded) {
-          return;
+        return;
       }
       var positionOfReplacementInTitleLeft = React.findDOMNode(this.refs['replacementInTitle'])['offsetLeft'];
       this.setState({
