@@ -7,11 +7,13 @@ module marcolix {
 
   interface AppState {
     checkReport: CheckReport
+    selectedIssue: Issue
   }
 
   export class MainComponent extends React.Component<any,AppState> {
     state = {
-      checkReport: null
+      checkReport: null,
+      selectedIssue: null
     }
 
     componentDidMount() {
@@ -21,19 +23,33 @@ module marcolix {
     onCheckButton() {
       var editor = <EditorComponent> this.refs['editor'];
       service.check(editor.getText()).then((checkReport) => {
-        this.setState({
-            checkReport: checkReport
-          }
-        )
+        this.setState(utils.set(this.state, (s:AppState) => {
+          s.checkReport = checkReport;
+        }));
       });
+    }
+
+    onClickIssue = (issue:Issue) => {
+      console.log('Click:', issue);
+      this.setState(utils.set(this.state, (s:AppState) => {
+        s.selectedIssue = issue
+      }));
     }
 
     render() {
       return div({},
         button({className: 'checkButton', onClick: this.onCheckButton.bind(this)}, 'Check'),
         div({},
-          div({className: 'editorCol'}, Editor({checkReport: this.state.checkReport, ref: 'editor'})),
-          div({className: 'sidebarCol'}, Sidebar({checkReport: this.state.checkReport, ref: 'sidebar'}))
+          div({className: 'editorCol'}, Editor({
+            checkReport: this.state.checkReport,
+            selectedIssue: this.state.selectedIssue,
+            ref: 'editor'
+          })),
+          div({className: 'sidebarCol'}, Sidebar({
+            checkReport: this.state.checkReport,
+            onClickIssue: this.onClickIssue,
+            ref: 'sidebar'
+          }))
         )
       );
     }

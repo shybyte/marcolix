@@ -5,19 +5,27 @@
   background: #f8f8f8;
 }
 
+.marking {
+  border-bottom: 2px solid;
+}
+
 .editor {
-  .marking {
-    border-bottom: 2px solid #faa;
-    &:hover {
-      background: #faa;
-    }
+  .misspelling {
+    .marking();
+    border-bottom-color: #faa;
+    //&::selection {
+    //  background: #faa;
+    //}
   }
-  .marking.grammar,
-  .marking.whitespace {
+
+
+  .grammar,
+  .whitespace {
+    .marking();
     border-bottom-color: #afa;
-    &:hover {
-      background: #afa;
-    }
+    //&::selection {
+    //  background: #afa;
+    //}
   }
 }
 

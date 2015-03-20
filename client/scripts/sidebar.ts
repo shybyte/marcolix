@@ -134,6 +134,7 @@ module marcolix {
 
   export interface SidebarProps {
     checkReport: CheckReport
+    onClickIssue: (Isssue) => void
     ref?: string
   }
 
@@ -141,9 +142,11 @@ module marcolix {
     state = {
       expandedIssueIndex: -1
     }
+
     onClickIssue = (index:number) => {
       console.log('Clicked on', index);
       this.setState({expandedIssueIndex: index});
+      this.props.onClickIssue(this.props.checkReport.issues[index]);
     }
 
     render() {
@@ -152,7 +155,6 @@ module marcolix {
 
       if (!p.checkReport) {
         return div({}, 'No Check Result YET!')
-
       }
       return div({className: 'sidebar'},
         p.checkReport.issues.map((issue, i) => SidebarFac({
