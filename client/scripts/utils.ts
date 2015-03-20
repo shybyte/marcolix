@@ -4,4 +4,18 @@ module marcolix.utils {
     f(clone);
     return clone;
   }
+
+  export function removeMarkings(node:HTMLElement) {
+    var markings = node.querySelectorAll('span');
+    _.forEach(markings, (marking:Node) => {
+      var parent = marking.parentNode;
+      var childNodesArray = _.map(marking.childNodes, _.identity);
+      childNodesArray.forEach((childNode:Node) => {
+        parent.insertBefore(childNode, marking);
+      });
+      parent.removeChild(marking);
+    });
+  }
+
+
 }

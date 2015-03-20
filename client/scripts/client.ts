@@ -55,7 +55,9 @@ module marcolix {
     }
   }
 
-  React.render(React.createElement(MainComponent), document.getElementById('app'))
+  if (!window['isTestRunning']) {
+    React.render(React.createElement(MainComponent), document.getElementById('app'))
+  }
 
 }
 

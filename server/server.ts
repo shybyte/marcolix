@@ -28,6 +28,7 @@ app.use(express.static(pathInsideProjectRoot('client')));
 app.use('/bower_components', express.static(pathInsideProjectRoot('bower_components')));
 app.use('/compiled', express.static(pathInsideProjectRoot('.tmp/compiled')));
 app.use('/client', express.static(pathInsideProjectRoot('client'))); // source-maps
+app.use('/tests', express.static(pathInsideProjectRoot('tests'))); // source-maps
 
 function check(req, res) {
   request({

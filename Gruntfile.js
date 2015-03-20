@@ -7,6 +7,12 @@ module.exports = function (grunt) {
         },
         files: 'client/**/*.html'
       },
+      tests: {
+        options: {
+          livereload: true
+        },
+        files: 'tests/client/**/*'
+      },
       less: {
         options: {
           livereload: true
@@ -50,7 +56,7 @@ module.exports = function (grunt) {
         dest: '.tmp/compiled/client.js',
         options: {
           target: 'es5',
-          sourceMap: true
+          sourceMap: false
         }
       },
       server: {

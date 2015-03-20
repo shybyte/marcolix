@@ -2,8 +2,6 @@
 
 module marcolix {
   var div = React.createFactory('div');
-  var MARKING_CLASS = 'marking';
-
   rangy.init();
 
   function addMarking(node:Element, range:[number,number], className:string, id:string) {
@@ -15,15 +13,6 @@ module marcolix {
       }
     });
     applier.applyToRange(rangyRange);
-  }
-
-  function removeAllMarkings(node:Element, classNames:string[]) {
-    var rangyRange = rangy.createRange();
-    rangyRange.selectNode(node);
-    classNames.forEach((className => {
-      var applier = rangy.createClassApplier(className);
-      applier.undoToRange(rangyRange);
-    }))
   }
 
   function selectText(firstNode:Node, lastNode:Node) {
@@ -45,7 +34,7 @@ module marcolix {
     }
 
     getEditableDiv() {
-      return React.findDOMNode(this.refs['editableDiv'])
+      return  <HTMLElement> React.findDOMNode(this.refs['editableDiv'])
     }
 
     getText() {
@@ -59,11 +48,11 @@ module marcolix {
     }
 
     componentDidUpdate() {
-      var editableDiv = this.getEditableDiv();
+      var editableDiv  = this.getEditableDiv();
 
       if (this.state.isRefreshOfMarkingsNeeded) {
         console.log('Refresh Markings ...');
-        removeAllMarkings(editableDiv, ['misspelling', 'whitespace', 'grammar']);
+        utils.removeMarkings(editableDiv);
         if (!this.props.checkReport) {
           return;
         }
