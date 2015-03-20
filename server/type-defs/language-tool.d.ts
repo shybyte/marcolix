@@ -3,8 +3,10 @@ declare module languageTool {
     context: string
     msg: string
     replacements: string
-    contextoffset: number
-    errorlength: number
+    offset: string
+    contextoffset: string
+    errorlength: string
+    locqualityissuetype: string
   }
 
   export interface CheckReport {

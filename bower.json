@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "react": "~0.13.0",
-    "reqwest": "~1.1.5"
+    "reqwest": "~1.1.5",
+    "rangy": "1.3"
   }
 }

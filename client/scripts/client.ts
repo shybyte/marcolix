@@ -6,15 +6,12 @@ module marcolix {
   var button = React.createFactory('button');
 
   interface AppState {
-    sidebarProps: SidebarProps
+    checkReport: CheckReport
   }
 
   export class MainComponent extends React.Component<any,AppState> {
     state = {
-      sidebarProps: {
-        checkReport: null,
-        ref: 'sidebar'
-      }
+      checkReport: null
     }
 
     componentDidMount() {
@@ -25,9 +22,7 @@ module marcolix {
       var editor = <EditorComponent> this.refs['editor'];
       service.check(editor.getText()).then((checkReport) => {
         this.setState({
-            sidebarProps: {
-              checkReport: checkReport
-            }
+            checkReport: checkReport
           }
         )
       });
@@ -37,8 +32,8 @@ module marcolix {
       return div({},
         button({className: 'checkButton', onClick: this.onCheckButton.bind(this)}, 'Check'),
         div({},
-          div({className: 'editorCol'}, Editor({ref: 'editor'})),
-          div({className: 'sidebarCol'}, Sidebar(this.state.sidebarProps))
+          div({className: 'editorCol'}, Editor({checkReport: this.state.checkReport, ref: 'editor'})),
+          div({className: 'sidebarCol'}, Sidebar({checkReport: this.state.checkReport, ref: 'sidebar'}))
         )
       );
     }

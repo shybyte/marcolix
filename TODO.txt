@@ -1,8 +1,8 @@
 Doing:
 
 
+
 TODO:
-    * Add markings to text
     * Clicking in sidebar selects flag in text
     * Replacements
     * Check as you type (complete text)
@@ -29,3 +29,4 @@ Done:
     * Handle white spaces in begin of an issue by adding the preceding word [0:45]
     * Expand card [0:45]
     * Bug: Cards with no replacement does not expand [0:05]
+    * Add markings to text [2:30]
