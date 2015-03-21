@@ -4,9 +4,7 @@ module marcolix {
   var div = React.createFactory('div');
   rangy.init();
 
-  function addMarking(node:Element, range:[number,number], className:string, id:string) {
-    var rangyRange = rangy.createRange();
-    rangyRange.selectCharacters(node, range[0], range[1]);
+  function addMarkingToRangyRange(rangyRange, className, id) {
     var applier = rangy.createClassApplier(className, {
       elementAttributes: {
         itemId: id
@@ -23,6 +21,19 @@ module marcolix {
     sel.setSingleRange(r);
   }
 
+  function addMarkings(editableDiv, checkReport) {
+    var range = [0, 0];
+    var rangyRange = rangy.createRange();
+    rangyRange.selectCharacters(editableDiv, range[0], range[1]);
+    checkReport.issues.forEach((issue:Issue) => {
+      rangyRange.collapse(true);
+      rangyRange.moveStart('character', issue.range[0] - range[0]);
+      rangyRange.moveEnd('character', issue.range[1] - issue.range[0]);
+      addMarkingToRangyRange(rangyRange, issue.type, issue.id);
+      range = issue.range;
+    });
+  }
+
   interface EditorProps {
     checkReport: CheckReport
     selectedIssue: Issue
@@ -34,7 +45,7 @@ module marcolix {
     }
 
     getEditableDiv() {
-      return  <HTMLElement> React.findDOMNode(this.refs['editableDiv'])
+      return <HTMLElement> React.findDOMNode(this.refs['editableDiv'])
     }
 
     getText() {
@@ -43,23 +54,24 @@ module marcolix {
 
     componentDidMount() {
       var editableDiv = this.getEditableDiv();
-      editableDiv.textContent = 'Ei heve cuked thiss soup forr mie .A crave to complicoted. It is an problemm.';
-      //this.getEditableDiv().textContent = 'This is super .';
+      var issueFreeDummyText = _.repeat('This is a good text. I like it. ', 100);
+      var textWithIssues = 'Ei heve cuked thiss soup forr mie .A crave to complicoted. It is an problemm.';
+      editableDiv.textContent = issueFreeDummyText + _.repeat(textWithIssues, 10);
     }
 
     componentDidUpdate() {
-      var editableDiv  = this.getEditableDiv();
+      var editableDiv = this.getEditableDiv();
 
       if (this.state.isRefreshOfMarkingsNeeded) {
         console.log('Refresh Markings ...');
+        var time = Date.now();
         utils.removeMarkings(editableDiv);
         if (!this.props.checkReport) {
           return;
         }
-        this.props.checkReport.issues.map((issue:Issue) => {
-          addMarking(editableDiv, issue.range, issue.type, issue.id);
-        });
-
+        addMarkings(editableDiv, this.props.checkReport);
+        var endTime = Date.now();
+        console.log('Time for Markings:', endTime - time);
         this.setState({isRefreshOfMarkingsNeeded: false});
       }
 
