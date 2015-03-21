@@ -1,11 +1,11 @@
 Doing:
 
-
 TODO:
     * Replacements
     * Check as you type (complete text)
     * Optimize Check (Caching sentences)
     * Optimize Check (Parallel check)
+    * Speed Up more: Add Markings
     * Optimize Card Rendering / Expanded card
     * Check as you type (partial text request)
         * Server state
@@ -31,3 +31,7 @@ Done:
     * Clicking in sidebar selects flag in text [1:00]
         * Fix overlapping markings bug [1:00]
     * Fix span inflation (Remove old markings completely adding new markings) [1:30]
+    * Speed Up: Add Markings [1:00]
+
+Learned:
+    * Test Performance early
