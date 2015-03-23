@@ -1,7 +1,7 @@
 Doing:
 
+
 TODO:
-    * Replacements
     * Check as you type (complete text)
     * Optimize Check (Caching sentences)
     * Optimize Check (Parallel check)
@@ -32,6 +32,7 @@ Done:
         * Fix overlapping markings bug [1:00]
     * Fix span inflation (Remove old markings completely adding new markings) [1:30]
     * Speed Up: Add Markings [1:00]
+    * Replacements
 
 Learned:
-    * Test Performance early
+    * Test Performance (of libraries) early

@@ -5,8 +5,8 @@ module marcolix {
 
   interface IssueComponentProps {
     issue: Issue
-    onClick: (index:number) => void
-    index: number
+    onClick: (issue:Issue) => void
+    onClickReplacement: (issue:Issue, index:number) => void
     expanded: boolean
   }
 
@@ -70,13 +70,24 @@ module marcolix {
 
     isReplacementPopupOpen = () => (this.state.isMouseOverReplacementInTitle || this.state.isMouseOverReplacementPopup)
 
+    onClickReplacement = (event: Event, replacementIndex:number) => {
+      event.stopPropagation();
+      this.props.onClickReplacement(this.props.issue, replacementIndex);
+    }
+
     render() {
       var p = this.props;
       var issue = this.props.issue;
+      var onClickReplacement = this.onClickReplacement;
+
 
       function renderReplacementsTail() {
         return issue.replacements.slice(1, 5).map((replacement, i) =>
-            span({className: 'replacement', key: i},
+            span({
+                className: 'replacement',
+                key: i,
+                onClick: (ev) => onClickReplacement(ev, i + 1)
+              },
               makeSuffixPrefixWhiteSpaceVisible(replacement)
             )
         )
@@ -84,7 +95,7 @@ module marcolix {
 
       return div({className: 'issue' + (p.expanded ? ' expanded' : ''), title: issue.message},
         // title
-        div({className: 'issueTitle', onClick: () => p.onClick(p.index)},
+        div({className: 'issueTitle', onClick: () => p.onClick(p.issue)},
           span({className: 'icons'}, span({className: 'openCloseIcon'}, '')),
           span({className: 'surface'},
             makeSuffixPrefixWhiteSpaceVisible(issue.surface)),
@@ -95,7 +106,8 @@ module marcolix {
                   className: 'replacement',
                   ref: 'replacementInTitle',
                   onMouseOver: this.onMouseOverReplacementInTitle,
-                  onMouseOut: this.onMouseOutReplacementInTitle
+                  onMouseOut: this.onMouseOutReplacementInTitle,
+                  onClick: (ev) => onClickReplacement(ev,0)
                 },
                 makeSuffixPrefixWhiteSpaceVisible(issue.replacements[0]))
             ) : null),
@@ -130,23 +142,24 @@ module marcolix {
       );
     }
   }
-  var SidebarFac = React.createFactory(IssueComponent);
+  var IssueFac = React.createFactory(IssueComponent);
 
   export interface SidebarProps {
     checkReport: CheckReport
+    issues: Issue[]
     onClickIssue: (Isssue) => void
+    onClickReplacement: (issue:Issue, index:number) => void
     ref?: string
   }
 
   export class SidebarComponent extends React.Component<SidebarProps,any> {
     state = {
-      expandedIssueIndex: -1
+      expandedIssue: null
     }
 
-    onClickIssue = (index:number) => {
-      console.log('Clicked on', index);
-      this.setState({expandedIssueIndex: index});
-      this.props.onClickIssue(this.props.checkReport.issues[index]);
+    onClickIssue = (issue:Issue) => {
+      this.setState({expandedIssue: issue});
+      this.props.onClickIssue(issue);
     }
 
     render() {
@@ -157,12 +170,12 @@ module marcolix {
         return div({}, 'No Check Result YET!')
       }
       return div({className: 'sidebar'},
-        p.checkReport.issues.map((issue, i) => SidebarFac({
-          onClick: this.onClickIssue,
+        p.issues.map((issue) => IssueFac({
+          onClick: () => this.onClickIssue(issue),
+          onClickReplacement: this.props.onClickReplacement,
           issue: issue,
-          expanded: i === state.expandedIssueIndex,
-          index: i,
-          key: '' + i
+          expanded: issue === state.expandedIssue,
+          key: '' + issue.id
         }))
       );
     }

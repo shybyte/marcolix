@@ -7,12 +7,14 @@ module marcolix {
 
   interface AppState {
     checkReport: CheckReport
+    issues: Issue[]
     selectedIssue: Issue
   }
 
   export class MainComponent extends React.Component<any,AppState> {
     state = {
       checkReport: null,
+      issues: [],
       selectedIssue: null
     }
 
@@ -25,6 +27,7 @@ module marcolix {
       service.check(editor.getText()).then((checkReport) => {
         this.setState(utils.set(this.state, (s:AppState) => {
           s.checkReport = checkReport;
+          s.issues = checkReport.issues;
         }));
       });
     }
@@ -32,7 +35,18 @@ module marcolix {
     onClickIssue = (issue:Issue) => {
       console.log('Click:', issue);
       this.setState(utils.set(this.state, (s:AppState) => {
-        s.selectedIssue = issue
+        s.selectedIssue = issue;
+      }));
+    }
+
+    onClickReplacement = (issue:Issue,index: number) => {
+      console.log('Clicked Replacement:', issue, index);
+
+      var editor = <EditorComponent> this.refs['editor'];
+      editor.replaceIssue(issue, index);
+
+      this.setState(utils.set(this.state, (s:AppState) => {
+        s.issues = _.reject(s.issues, issue);
       }));
     }
 
@@ -47,7 +61,9 @@ module marcolix {
           })),
           div({className: 'sidebarCol'}, Sidebar({
             checkReport: this.state.checkReport,
+            issues: this.state.issues,
             onClickIssue: this.onClickIssue,
+            onClickReplacement: this.onClickReplacement,
             ref: 'sidebar'
           }))
         )
