@@ -18,13 +18,29 @@ module marcolix {
       selectedIssue: null
     }
 
+    lastText = ''
+
     componentDidMount() {
-      this.onCheckButton();
+      this.check();
+      this.startNextCheckTimeout();
     }
 
-    onCheckButton() {
+    startNextCheckTimeout() {
+      setTimeout(() => {
+        this.check().then( () => {
+          this.startNextCheckTimeout();
+        });
+      }, 5000);
+    }
+
+    check() : Promise<any> {
       var editor = <EditorComponent> this.refs['editor'];
-      service.check(editor.getText()).then((checkReport) => {
+      var currentText = editor.getText();
+      if (currentText === this.lastText) {
+        return new Promise(resolve => resolve());
+      }
+      this.lastText = currentText;
+      return service.check(currentText).then((checkReport) => {
         this.setState(utils.set(this.state, (s:AppState) => {
           s.checkReport = checkReport;
           s.issues = checkReport.issues;
@@ -39,7 +55,7 @@ module marcolix {
       }));
     }
 
-    onClickReplacement = (issue:Issue,index: number) => {
+    onClickReplacement = (issue:Issue, index:number) => {
       console.log('Clicked Replacement:', issue, index);
 
       var editor = <EditorComponent> this.refs['editor'];
@@ -52,7 +68,7 @@ module marcolix {
 
     render() {
       return div({},
-        button({className: 'checkButton', onClick: this.onCheckButton.bind(this)}, 'Check'),
+        button({className: 'checkButton', onClick: this.check.bind(this)}, 'Check'),
         div({},
           div({className: 'editorCol'}, Editor({
             checkReport: this.state.checkReport,

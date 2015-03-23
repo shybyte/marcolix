@@ -2,10 +2,10 @@ Doing:
 
 
 TODO:
-    * Check as you type (complete text)
     * Optimize Check (Caching sentences)
     * Optimize Check (Parallel check)
     * Speed Up more: Add Markings
+    * Prevent to flag around cursor when typing a new word
     * Optimize Card Rendering / Expanded card
     * Check as you type (partial text request)
         * Server state
@@ -32,7 +32,9 @@ Done:
         * Fix overlapping markings bug [1:00]
     * Fix span inflation (Remove old markings completely adding new markings) [1:30]
     * Speed Up: Add Markings [1:00]
-    * Replacements
+    * Replacements [1:00]
+    * Check as you type (complete text) [1:00]
+
 
 Learned:
     * Test Performance (of libraries) early

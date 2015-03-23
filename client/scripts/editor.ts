@@ -13,23 +13,26 @@ module marcolix {
     applier.applyToRange(rangyRange);
   }
 
-  function createRange(nodes: Node[] | NodeList) {
+  function createRange(nodes:Node[] | NodeList) {
     var r = rangy.createRange();
     r.setStartBefore(nodes[0]);
-    r.setEndAfter(nodes[nodes.length-1]);
+    r.setEndAfter(nodes[nodes.length - 1]);
     return r;
   }
 
-  function setRangeText(nodes: Node[] | NodeList, text: string) {
+  function setRangeText(nodes:Node[] | NodeList, text:string) {
     var range = createRange(nodes);
     range.deleteContents();
     range.insertNode(document.createTextNode(text));
   }
 
-  function selectText(nodes: Node[] | NodeList) {
-    var range = createRange(nodes);
+  function selectRange(rangyRange) {
     var sel = rangy.getSelection();
-    sel.setSingleRange(range);
+    sel.setSingleRange(rangyRange);
+  }
+
+  function selectText(nodes:Node[] | NodeList) {
+    selectRange(createRange(nodes));
   }
 
   function addMarkings(editableDiv, checkReport) {
@@ -65,9 +68,9 @@ module marcolix {
 
     componentDidMount() {
       var editableDiv = this.getEditableDiv();
-      var issueFreeDummyText = _.repeat('This is a good text. I like it. ', 0);
+      var issueFreeDummyText = _.repeat('This is a good text. I like it. ', 2);
       var textWithIssues = 'Ei heve cuked thiss soup forr mie .A crave to complicoted. It is an problemm.';
-      editableDiv.textContent = issueFreeDummyText + _.repeat(textWithIssues, 1);
+      editableDiv.textContent = issueFreeDummyText + _.repeat(textWithIssues, 2);
     }
 
     componentDidUpdate() {
@@ -76,11 +79,15 @@ module marcolix {
       if (this.state.isRefreshOfMarkingsNeeded) {
         console.log('Refresh Markings ...');
         var time = Date.now();
+        var savedSelection = rangy.saveSelection();
         utils.removeMarkings(editableDiv);
         if (!this.props.checkReport) {
           return;
         }
         addMarkings(editableDiv, this.props.checkReport);
+        if (savedSelection) {
+          rangy.restoreSelection(savedSelection);
+        }
         var endTime = Date.now();
         console.log('Time for Markings:', endTime - time);
         this.setState({isRefreshOfMarkingsNeeded: false});
@@ -102,7 +109,7 @@ module marcolix {
       }
     }
 
-    getMarkingNodes(issue: Issue) {
+    getMarkingNodes(issue:Issue) {
       return document.querySelectorAll('[itemid=\"' + issue.id + '\"]');
     }
 

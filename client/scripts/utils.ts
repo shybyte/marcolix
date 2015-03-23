@@ -6,7 +6,7 @@ module marcolix.utils {
   }
 
   export function removeMarkings(node:HTMLElement) {
-    var markings = node.querySelectorAll('span');
+    var markings = node.querySelectorAll('span[itemId]');
     _.forEach(markings, (marking:Node) => {
       var parent = marking.parentNode;
       var childNodesArray = _.map(marking.childNodes, _.identity);
