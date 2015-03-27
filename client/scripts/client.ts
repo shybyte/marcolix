@@ -33,10 +33,10 @@ module marcolix {
       }, 5000);
     }
 
-    check() : Promise<any> {
+    check = (force?: boolean) : Promise<any> => {
       var editor = <EditorComponent> this.refs['editor'];
       var currentText = editor.getText();
-      if (currentText === this.lastText) {
+      if (!force && currentText === this.lastText) {
         return new Promise(resolve => resolve());
       }
       this.lastText = currentText;
@@ -68,7 +68,7 @@ module marcolix {
 
     render() {
       return div({},
-        button({className: 'checkButton', onClick: this.check.bind(this)}, 'Check'),
+        button({className: 'checkButton', onClick: () => this.check(true)}, 'Check'),
         div({},
           div({className: 'editorCol'}, Editor({
             checkReport: this.state.checkReport,

@@ -1,5 +1,5 @@
 declare module marcolix {
-  type Range = [number,number]
+  type Range = [number,number] // [beginOffset,endOffset]
 
   export interface Issue {
     id: string

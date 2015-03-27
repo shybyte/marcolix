@@ -2,8 +2,10 @@ Doing:
 
 
 TODO:
-    * Optimize Check (Caching sentences)
     * Optimize Check (Parallel check)
+    * Scroll in sidebar to issue under cursor
+    * Scroll in editor to selected issue
+    * Fix missing white space issues on sentence borders, caused by sentence segmentation
     * Speed Up more: Add Markings
     * Prevent to flag around cursor when typing a new word
     * Optimize Card Rendering / Expanded card
@@ -34,7 +36,7 @@ Done:
     * Speed Up: Add Markings [1:00]
     * Replacements [1:00]
     * Check as you type (complete text) [1:00]
-
+    * Optimize Check (Caching sentences) [8:30]
 
 Learned:
     * Test Performance (of libraries) early

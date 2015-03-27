@@ -33,7 +33,7 @@ module.exports = function (grunt) {
           atBegin: true,
           livereload: true
         },
-        files: ['server/**/*.ts', 'shared/**/*.ts'],
+        files: ['server/**/*.ts', 'shared/**/*.ts', 'tests/server**/*.ts'],
         tasks: 'typescript:server'
       }
 
@@ -60,15 +60,16 @@ module.exports = function (grunt) {
         }
       },
       server: {
-        src: ['server/**/*.ts', 'shared/**/*.ts'],
-        dest: '.tmp/compiled/server',
+        src: ['server/**/*.ts', 'shared/**/*.ts','tests/server/**/*.ts'],
+        dest: '.tmp/compiled',
         options: {
-          basePath: 'server',
+          basePath: '',
           target: 'es5',
-          module: 'commonjs',
-          sourceMap: true
+          module: 'commonjs'
+          //sourceMap: true
         }
       }
+
 
     },
 
@@ -93,6 +94,15 @@ module.exports = function (grunt) {
         copy: false
       },
       install: {}
+    },
+
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['tests/server/**/*.js']
+      }
     }
 
   };
@@ -102,7 +112,7 @@ module.exports = function (grunt) {
   require('jit-grunt')(grunt, {bower: 'grunt-bower-task'});
 
   grunt.registerTask('default', ['build', 'serve']);
-  grunt.registerTask('build', ['bower:install', 'less:dev']);
+  grunt.registerTask('build', ['bower:install', 'less:dev','mochaTest']);
   grunt.registerTask('serve', ['concurrent']);
 
   grunt.registerTask('ts', ['typescript:server']);

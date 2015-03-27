@@ -7,6 +7,7 @@ declare module languageTool {
     contextoffset: string
     errorlength: string
     locqualityissuetype: string
+    ruleId: string
   }
 
   export interface CheckReport {

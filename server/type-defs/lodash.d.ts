@@ -3205,6 +3205,16 @@ declare module _ {
             thisArg?: any): LoDashObjectWrapper<Dictionary<T>>;
     }
 
+    //_.partition
+    interface LoDashStatic {
+        partition<T>(
+          collection: Array<T>,
+          callback?: ListIterator<T, boolean>,
+          thisArg?: any): [T[],T[]];
+    }
+
+
+
     //_.groupBy
     interface LoDashStatic {
         /**

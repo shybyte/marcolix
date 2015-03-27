@@ -26,7 +26,8 @@ export function convertCheckReport(checkReportLanguageTool:languageTool.CheckRep
         surface: error.context.substr(parseInt(error.contextoffset), errorLength),
         replacements: error.replacements ? error.replacements.split('#') : [],
         range: [offset, offset + errorLength],
-        type: error.locqualityissuetype
+        type: error.locqualityissuetype,
+        ruleId: error.ruleId
       };
       if (startsWithWhiteSpace(issue.surface)) {
         return prependPrecedingWord(issue, error);
