@@ -2,6 +2,7 @@ import path = require('path');
 import http = require('http');
 import express = require('express');
 import bodyParser = require('body-parser');
+var compression = require('compression');
 
 import checking = require('./checking');
 
@@ -14,6 +15,7 @@ var app = express();
 var port = 3000;
 app.set('port', port);
 
+app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 

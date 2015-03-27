@@ -37,6 +37,7 @@ Done:
     * Replacements [1:00]
     * Check as you type (complete text) [1:00]
     * Optimize Check (Caching sentences) [8:30]
+    * Added gzip compression [0:05]
 
 Learned:
     * Test Performance (of libraries) early
