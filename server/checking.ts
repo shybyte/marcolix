@@ -15,12 +15,17 @@ import Issue = marcolix.Issue;
 import CheckReport = marcolix.CheckReport;
 
 
+//var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081'];
+var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081', 'http://localhost:8082'];
+//var LANGUAGE_TOOL_SERVERS = ['http://192.168.43.164:8081', 'http://192.168.43.164:8082', 'http://192.168.43.164:8083','http://localhost:8081'];
+
+
 interface Sentence {
   offset: number;
   text: string;
 }
 
-export interface IssueWithinSentence extends Issue{
+export interface IssueWithinSentence extends Issue {
   sentence?: Sentence
   rangeInSentence?: marcolix.Range
 }
@@ -35,14 +40,14 @@ function makeCacheKey(language:string, text:string) {
   return language + ':' + text;
 }
 
-function checkText(text:string, language:string):Promise<marcolix.CheckReport> {
+function checkText(text:string, language:string, languageToolServerUrl:string = 'http://localhost:8081'):Promise<marcolix.CheckReport> {
   return request({
-    url: 'http://localhost:8081',
+    url: languageToolServerUrl,
     method: 'POST',
     form: {
       language: language,
       text: text,
-      disabled: 'ENGLISH_WORD_REPEAT_BEGINNING_RULE'
+      disabled: 'ENGLISH_WORD_REPEAT_BEGINNING_RULE,WHITESPACE_RULE'
     }
   }).then(function (checkRequestResponse) {
     var checkReportXML = checkRequestResponse[1];
@@ -66,20 +71,46 @@ export function fixIssueRanges(sentences:JoinedSentence[], issues:Issue[]):Issue
   });
 }
 
-function checkSentences(sentences:Sentence[], language:string):Promise<IssueWithinSentence[]> {
-  var joinedText = '';
-  var joinedSentences:JoinedSentence[] = [];
-  sentences.forEach(s => {
-    joinedSentences.push({
+class Partition {
+  constructor(public joinedText:string = '',
+              public joinedSentences:JoinedSentence[] = []) {
+  }
+}
+
+function splitIntoPartitions(sentences:Sentence[]):Partition[] {
+  var partition = new Partition();
+  var partitions:Partition[] = [partition];
+  var partitionSize = Math.ceil(sentences.length / LANGUAGE_TOOL_SERVERS.length);
+
+  sentences.forEach((s, i) => {
+    partition.joinedSentences.push({
       offset: s.offset,
       text: s.text,
-      joinedOffset: joinedText.length
+      joinedOffset: partition.joinedText.length
     });
-    joinedText += s.text + ' ';
+    partition.joinedText += s.text;
+    if (i < sentences.length - 1) {
+      if (partition.joinedSentences.length >= partitionSize) {
+        partition = new Partition();
+        partitions.push(partition);
+      } else {
+        partition.joinedText += ' ';
+      }
+    }
   });
-  console.log('Check:'+ joinedText);
-  return checkText(joinedText, language).then(checkReport =>
-    fixIssueRanges(joinedSentences, checkReport.issues));
+
+  return partitions;
+}
+
+function checkSentences(sentences:Sentence[], language:string):Promise<IssueWithinSentence[]> {
+  var partitions = splitIntoPartitions(sentences);
+  return Promise.all(partitions.map((p, i) => checkText(p.joinedText, language, LANGUAGE_TOOL_SERVERS[i])))
+    .then(function (checkReports:marcolix.CheckReport[]) {
+      return <IssueWithinSentence[]> _.flatten(checkReports.map((checkReport, partitionIndex) =>
+          fixIssueRanges(partitions[partitionIndex].joinedSentences, checkReport.issues)
+      ));
+    }
+  );
 }
 
 export function getSentences(sentencesTexts:string[]):Sentence[] {
@@ -101,7 +132,7 @@ function getIssuesFromCache(language, s:Sentence):Issue[] {
   });
 }
 
-function cacheIssues(language: string, sentences: Sentence[], newIssues: IssueWithinSentence[]) {
+function cacheIssues(language:string, sentences:Sentence[], newIssues:IssueWithinSentence[]) {
   var newIssuesBySentenceOffset = _.groupBy(newIssues, issue => issue.sentence.offset);
   _.forEach(sentences, sentence => {
     cache[makeCacheKey(language, sentence.text)] = newIssuesBySentenceOffset[sentence.offset] || [];
@@ -111,20 +142,21 @@ function cacheIssues(language: string, sentences: Sentence[], newIssues: IssueWi
 export function check(req, res) {
   var startTime = Date.now();
   var language = req.query.language || req.body.language;
-  var checkPartialTextWithCurrentLanguage = (sentence:Sentence) => checkText(sentence.text, language);
   var text = req.query.text || req.body.text;
   var sentencesTexts = nlp.splitIntoSentences(text);
   var sentences = getSentences(sentencesTexts);
   var sentencePartition = _.partition(sentences, s => cache[makeCacheKey(language, s.text)])
   var cachedSentences = sentencePartition[0];
   var unCachedSentences = sentencePartition[1];
-  var unCachedUnEmptySentences = _.reject(unCachedSentences, s => s.text == ' ');
+  var unCachedUnEmptySentences = _.reject(unCachedSentences, s => s.text.trim() == '');
   checkSentences(unCachedUnEmptySentences, language).then(function (newIssues) {
-    cacheIssues(language, unCachedUnEmptySentences, newIssues);
+    //console.log('newIssues:', newIssues);
     var issuesFromCache = <Issue[]> _.flatten(cachedSentences.map(s => getIssuesFromCache(language, s)));
+    cacheIssues(language, unCachedUnEmptySentences, newIssues);
     var allIssues = _.sortBy(newIssues.concat(issuesFromCache), issue => issue.range[0]);
     var allIssuesCleaned = map(allIssues, issue => {
       delete issue.sentence;
+      issue.id = _.uniqueId();
     });
     console.log('Time', Date.now() - startTime);
     res.json({issues: allIssuesCleaned});

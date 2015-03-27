@@ -68,17 +68,17 @@ module marcolix {
 
     componentDidMount() {
       var editableDiv = this.getEditableDiv();
-      var issueFreeDummyText = 'This is a good text. I like it. ';
+      var issueFreeDummyText = 'This is a good text that I wrote just for you. I like it really much do you know? ';
       var textWithIssues = 'Ei heve cuked thiss soup forr mie .A crave to complicoted. It is an problemm.';
-      var longDummyText = 'When they are young you have to wate 3 days then you can injeck them for' +
-        'pneumonia diseases you have mack shore they have drye straw when you clean them out you should not leave a ' +
+      var longDummyText = 'When they are young you have to wate 3 days. Then you can injeck them for' +
+        'pneumonia diseases. You have mack shore they have drye straw.  When you clean them out you should not leave a ' +
         'falk in with them because the mother might nock it down and ' +
         'the little pigs might stab them souve. Ee give the worme pouder that is when they get the worme. This will stop ' +
         'them from going thin you should box a little place off so only the little pigs can get in it that is' +
         'so they can ge out of the way of there mother.  Some people put a light in with theme to geep them warm. You have ' +
         'to make shore that mother. ';
-      //editableDiv.textContent = _.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 20) + _.repeat(textWithIssues, 2);
-      editableDiv.textContent = _.repeat(longDummyText, 0) + _.repeat(issueFreeDummyText, 0) + _.repeat(textWithIssues, 2);
+      editableDiv.textContent = _.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 20) + _.repeat(textWithIssues, 2);
+      //editableDiv.textContent = _.repeat(longDummyText, 0) + _.repeat(issueFreeDummyText, 0) + _.repeat(textWithIssues, 2);
       //editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
       //editableDiv.textContent = 'This is an test. This is an test. This is an test. This is an test.';
     }
