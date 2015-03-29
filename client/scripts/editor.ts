@@ -107,6 +107,13 @@ module marcolix {
         var markingNodes = this.getMarkingNodes(this.props.selectedIssue);
         if (markingNodes.length > 0) {
           selectText(markingNodes);
+          var markingTop = markingNodes[0].offsetTop;
+          var scrollTop = editableDiv.scrollTop;
+          if (markingTop < editableDiv.scrollTop) {
+            editableDiv.scrollTop = markingTop - 20;
+          } else if (markingTop > scrollTop + editableDiv.offsetHeight) {
+            editableDiv.scrollTop = markingTop - editableDiv.offsetHeight + 40;
+          }
         }
       }
 
@@ -119,8 +126,9 @@ module marcolix {
       }
     }
 
-    getMarkingNodes(issue:Issue) {
-      return document.querySelectorAll('[itemid=\"' + issue.id + '\"]');
+    getMarkingNodes(issue:Issue):HTMLElement[] {
+      var nodeList = document.querySelectorAll('[itemid=\"' + issue.id + '\"]');
+      return [].slice.call(nodeList);
     }
 
     replaceIssue = (issue:Issue, replacementIndex) => {
@@ -134,7 +142,9 @@ module marcolix {
 
 
     render() {
-      return div({className: 'editor', contentEditable: true, ref: 'editableDiv', spellCheck: false});
+      return div({
+        className: 'editor', contentEditable: true, ref: 'editableDiv', spellCheck: false
+      });
     }
 
   }

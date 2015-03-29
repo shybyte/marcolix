@@ -1,6 +1,9 @@
+@editorHeight: 300px;
+
 h1 {
   color: orange;
 }
+
 
 button {
   background-color: #aaaaff;
@@ -15,6 +18,8 @@ button {
 
 .editorCol,
 .sidebarCol {
+  height: @editorHeight;
+  overflow: hidden;
   width: 50%;
   float: left;
 }

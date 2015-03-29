@@ -1,10 +1,8 @@
 Doing:
 
-
-
 TODO:
     * Scroll in sidebar to issue under cursor
-    * Scroll in editor to selected issue
+    * Fixed "User typing while checking causes misaligned markings" bug
     * Speed Up more: Add Markings
     * Prevent to flag around cursor when typing a new word
     * Optimize Card Rendering / Expanded card
@@ -13,8 +11,13 @@ TODO:
         * Send Diff
     * Check as you type (partial check result)
     * Fine tuning of Check as you type
+    * Show Flesch Reading Ease
+    * Clever check as you type (wait for user to pause typing)
     * Fixed wrong WHITESPACE_RULE (repeated whitespace) at end of text
     * Fix missing white space issues on sentence borders, caused by sentence segmentation
+    * Show Number of words and check speed
+    * Style Scroll-Bars
+    * SmoothScroll ()
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -41,6 +44,7 @@ Done:
     * Added gzip compression [0:05]
     * Disable WHITESPACE_RULE (repeated whitespace) for now.
     * Optimize Check (Parallel check) [2:15]
+    * Scroll in editor to selected issue [0:45]
 
 Learned:
     * Test Performance (of libraries) early
