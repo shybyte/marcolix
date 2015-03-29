@@ -147,6 +147,7 @@ module marcolix {
   export interface SidebarProps {
     checkReport: CheckReport
     issues: Issue[]
+    selectedIssue: Issue
     onClickIssue: (Isssue) => void
     onClickReplacement: (issue:Issue, index:number) => void
     ref?: string
@@ -154,12 +155,25 @@ module marcolix {
 
   export class SidebarComponent extends React.Component<SidebarProps,any> {
     state = {
-      expandedIssue: null
     }
 
     onClickIssue = (issue:Issue) => {
-      this.setState({expandedIssue: issue});
       this.props.onClickIssue(issue);
+    }
+
+    componentDidUpdate () {
+      var selectedIssue = this.props.selectedIssue;
+      if (selectedIssue) {
+        // refactor, similar to editor.ts
+        var sidebarEl = <HTMLElement> React.findDOMNode(this);
+        var issueEl = <HTMLElement> React.findDOMNode(this.refs[selectedIssue.id]);
+        var issueTop = issueEl.offsetTop;
+        var scrollTop = sidebarEl.scrollTop;
+        var sidebarHeight = sidebarEl.offsetHeight;
+        if ((issueTop < sidebarEl.scrollTop) || (issueTop > scrollTop + sidebarHeight))  {
+          sidebarEl.scrollTop = issueTop -  Math.floor(sidebarHeight*3/4);
+        }
+      }
     }
 
     render() {
@@ -174,8 +188,9 @@ module marcolix {
           onClick: () => this.onClickIssue(issue),
           onClickReplacement: this.props.onClickReplacement,
           issue: issue,
-          expanded: issue === state.expandedIssue,
-          key: '' + issue.id
+          expanded: issue === p.selectedIssue,
+          key: issue.id,
+          ref: issue.id
         }))
       );
     }

@@ -7,7 +7,8 @@ module marcolix {
   function addMarkingToRangyRange(rangyRange, className, id) {
     var applier = rangy.createClassApplier(className, {
       elementAttributes: {
-        itemId: id
+        itemId: id,
+        'data-id': id
       }
     });
     applier.applyToRange(rangyRange);
@@ -51,6 +52,7 @@ module marcolix {
   interface EditorProps {
     checkReport: CheckReport
     selectedIssue: Issue
+    onCursorOverIssue: (issueId: string) => void
   }
 
   export class EditorComponent extends React.Component<EditorProps,any> {
@@ -81,6 +83,20 @@ module marcolix {
       //editableDiv.textContent = _.repeat(longDummyText, 0) + _.repeat(issueFreeDummyText, 0) + _.repeat(textWithIssues, 2);
       //editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
       //editableDiv.textContent = 'This is an test. This is an test. This is an test. This is an test.';
+      //setInterval(this.checkForChange, 5000);
+    }
+
+    checkForChange = () => {
+      console.log('checkForChange');
+      var sel = rangy.getSelection();
+      if (sel.rangeCount>0 && sel.isCollapsed) {
+        var range = sel.getRangeAt(0);
+        var el = range.startContainer;
+        var parent = el.parentNode;
+        if (parent.dataset.id) {
+          this.props.onCursorOverIssue(parent.dataset.id);
+        }
+      }
     }
 
     componentDidUpdate() {
@@ -143,7 +159,8 @@ module marcolix {
 
     render() {
       return div({
-        className: 'editor', contentEditable: true, ref: 'editableDiv', spellCheck: false
+        className: 'editor', contentEditable: true, ref: 'editableDiv', spellCheck: false,
+        onKeyDown: this.checkForChange,onKeyUp: this.checkForChange,onClick: this.checkForChange
       });
     }
 

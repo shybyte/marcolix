@@ -1,7 +1,6 @@
 Doing:
 
 TODO:
-    * Scroll in sidebar to issue under cursor
     * Fixed "User typing while checking causes misaligned markings" bug
     * Speed Up more: Add Markings
     * Prevent to flag around cursor when typing a new word
@@ -17,7 +16,8 @@ TODO:
     * Fix missing white space issues on sentence borders, caused by sentence segmentation
     * Show Number of words and check speed
     * Style Scroll-Bars
-    * SmoothScroll ()
+    * SmoothScroll (editor)
+    * SmoothScroll (sidebar)
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -45,6 +45,7 @@ Done:
     * Disable WHITESPACE_RULE (repeated whitespace) for now.
     * Optimize Check (Parallel check) [2:15]
     * Scroll in editor to selected issue [0:45]
+    * Scroll in sidebar to issue under cursor [1:00]
 
 Learned:
     * Test Performance (of libraries) early
