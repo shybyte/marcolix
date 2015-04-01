@@ -1,7 +1,9 @@
 /// <reference path="editor" />
 /// <reference path="sidebar" />
+/// <reference path="utils" />
 
 module marcolix {
+  var utils = marcolix.utils;
   var div = React.createFactory('div');
   var button = React.createFactory('button');
 
@@ -35,18 +37,25 @@ module marcolix {
       }, 5000);
     }
 
+    getEditorText = () => (<EditorComponent> this.refs['editor']).getText();
+
     check = (force?:boolean):Promise<any> => {
-      var editor = <EditorComponent> this.refs['editor'];
-      var currentText = editor.getText();
+      console.log('Checking?');
+      var currentText = this.getEditorText();
       if (!force && currentText === this.lastText) {
         return new Promise(resolve => resolve());
       }
+      console.log('Checking!');
       this.lastText = currentText;
-      return service.check(currentText).then((checkReport) => {
-        this.changeState((s:AppState) => {
-          s.checkReport = checkReport;
-          s.issues = checkReport.issues;
-        });
+      return service.check(currentText).then(this.onCheckResult);
+    }
+
+    onCheckResult = (checkReport:CheckReport) => {
+      var currentText = this.getEditorText();
+      var diff = utils.simpleDiff(this.lastText, currentText);
+      this.changeState((s:AppState) => {
+        s.checkReport = checkReport;
+        s.issues = utils.displaceIssues(checkReport.issues, diff);
       });
     }
 
@@ -87,7 +96,7 @@ module marcolix {
         button({className: 'checkButton', onClick: () => this.check(true)}, 'Check'),
         div({},
           div({className: 'editorCol'}, Editor({
-            checkReport: this.state.checkReport,
+            issues: this.state.issues,
             selectedIssue: this.state.selectedIssue,
             onCursorOverIssue: this.onCursorOverIssue,
             ref: 'editor'

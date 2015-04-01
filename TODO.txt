@@ -1,7 +1,6 @@
 Doing:
 
 TODO:
-    * Fixed "User typing while checking causes misaligned markings" bug
     * Speed Up more: Add Markings
     * Prevent to flag around cursor when typing a new word
     * Optimize Card Rendering / Expanded card
@@ -18,6 +17,7 @@ TODO:
     * Style Scroll-Bars
     * SmoothScroll (editor)
     * SmoothScroll (sidebar)
+    * Prevent concurrent checks (on client)
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -46,6 +46,7 @@ Done:
     * Optimize Check (Parallel check) [2:15]
     * Scroll in editor to selected issue [0:45]
     * Scroll in sidebar to issue under cursor [1:00]
+    * Fixed "User typing while checking causes misaligned markings" bug [2:35]
 
 Learned:
     * Test Performance (of libraries) early

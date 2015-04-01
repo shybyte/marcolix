@@ -36,11 +36,11 @@ module marcolix {
     selectRange(createRange(nodes));
   }
 
-  function addMarkings(editableDiv, checkReport) {
+  function addMarkings(editableDiv, issues: Issue[]) {
     var range = [0, 0];
     var rangyRange = rangy.createRange();
     rangyRange.selectCharacters(editableDiv, range[0], range[1]);
-    checkReport.issues.forEach((issue:Issue) => {
+    issues.forEach((issue:Issue) => {
       rangyRange.collapse(true);
       rangyRange.moveStart('character', issue.range[0] - range[0]);
       rangyRange.moveEnd('character', issue.range[1] - issue.range[0]);
@@ -50,7 +50,7 @@ module marcolix {
   }
 
   interface EditorProps {
-    checkReport: CheckReport
+    issues: Issue[]
     selectedIssue: Issue
     onCursorOverIssue: (issueId: string) => void
   }
@@ -79,15 +79,14 @@ module marcolix {
         'them from going thin you should box a little place off so only the little pigs can get in it that is' +
         'so they can ge out of the way of there mother.  Some people put a light in with theme to geep them warm. You have ' +
         'to make shore that mother. ';
-      editableDiv.textContent = _.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 20) + _.repeat(textWithIssues, 2);
+      //editableDiv.textContent = _.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 20) + _.repeat(textWithIssues, 2);
       //editableDiv.textContent = _.repeat(longDummyText, 0) + _.repeat(issueFreeDummyText, 0) + _.repeat(textWithIssues, 2);
-      //editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
+      editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
       //editableDiv.textContent = 'This is an test. This is an test. This is an test. This is an test.';
       //setInterval(this.checkForChange, 5000);
     }
 
-    checkForChange = () => {
-      console.log('checkForChange');
+    checkForCursorChange = () => {
       var sel = rangy.getSelection();
       if (sel.rangeCount>0 && sel.isCollapsed) {
         var range = sel.getRangeAt(0);
@@ -107,10 +106,10 @@ module marcolix {
         var time = Date.now();
         var savedSelection = rangy.saveSelection();
         utils.removeMarkings(editableDiv);
-        if (!this.props.checkReport) {
+        if (!this.props.issues) {
           return;
         }
-        addMarkings(editableDiv, this.props.checkReport);
+        addMarkings(editableDiv, this.props.issues);
         if (savedSelection) {
           rangy.restoreSelection(savedSelection);
         }
@@ -137,7 +136,7 @@ module marcolix {
 
 
     componentWillReceiveProps(nextProps:EditorProps) {
-      if (nextProps.checkReport !== this.props.checkReport) {
+      if (nextProps.issues !== this.props.issues) {
         this.setState({isRefreshOfMarkingsNeeded: true});
       }
     }
@@ -160,7 +159,7 @@ module marcolix {
     render() {
       return div({
         className: 'editor', contentEditable: true, ref: 'editableDiv', spellCheck: false,
-        onKeyDown: this.checkForChange,onKeyUp: this.checkForChange,onClick: this.checkForChange
+        onKeyDown: this.checkForCursorChange,onKeyUp: this.checkForCursorChange,onClick: this.checkForCursorChange
       });
     }
 

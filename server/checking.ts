@@ -149,18 +149,23 @@ export function check(req, res) {
   var cachedSentences = sentencePartition[0];
   var unCachedSentences = sentencePartition[1];
   var unCachedUnEmptySentences = _.reject(unCachedSentences, s => s.text.trim() == '');
-  checkSentences(unCachedUnEmptySentences, language).then(function (newIssues) {
-    //console.log('newIssues:', newIssues);
-    var issuesFromCache = <Issue[]> _.flatten(cachedSentences.map(s => getIssuesFromCache(language, s)));
-    cacheIssues(language, unCachedUnEmptySentences, newIssues);
-    var allIssues = _.sortBy(newIssues.concat(issuesFromCache), issue => issue.range[0]);
-    var allIssuesCleaned = map(allIssues, issue => {
-      delete issue.sentence;
-      issue.id = _.uniqueId();
+
+  // slow down for testing
+  setTimeout(function () {
+    checkSentences(unCachedUnEmptySentences, language).then(function (newIssues) {
+      //console.log('newIssues:', newIssues);
+      var issuesFromCache = <Issue[]> _.flatten(cachedSentences.map(s => getIssuesFromCache(language, s)));
+      cacheIssues(language, unCachedUnEmptySentences, newIssues);
+      var allIssues = _.sortBy(newIssues.concat(issuesFromCache), issue => issue.range[0]);
+      var allIssuesCleaned = map(allIssues, issue => {
+        delete issue.sentence;
+        issue.id = _.uniqueId();
+      });
+      console.log('Time', Date.now() - startTime);
+      res.json({issues: allIssuesCleaned});
     });
-    console.log('Time', Date.now() - startTime);
-    res.json({issues: allIssuesCleaned});
-  });
+  }, 10);
+
 };
 
 export function clearCache(req, res) {

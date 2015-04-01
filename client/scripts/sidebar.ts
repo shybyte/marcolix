@@ -167,6 +167,9 @@ module marcolix {
         // refactor, similar to editor.ts
         var sidebarEl = <HTMLElement> React.findDOMNode(this);
         var issueEl = <HTMLElement> React.findDOMNode(this.refs[selectedIssue.id]);
+        if (!issueEl) {
+          return;
+        }
         var issueTop = issueEl.offsetTop;
         var scrollTop = sidebarEl.scrollTop;
         var sidebarHeight = sidebarEl.offsetHeight;
