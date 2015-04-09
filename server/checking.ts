@@ -15,8 +15,8 @@ import Issue = marcolix.Issue;
 import CheckReport = marcolix.CheckReport;
 
 
-//var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081'];
-var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081', 'http://localhost:8082'];
+var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081'];
+//var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081', 'http://localhost:8082'];
 //var LANGUAGE_TOOL_SERVERS = ['http://192.168.43.164:8081', 'http://192.168.43.164:8082', 'http://192.168.43.164:8083','http://localhost:8081'];
 
 
