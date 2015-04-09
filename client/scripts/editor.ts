@@ -36,14 +36,23 @@ module marcolix {
     selectRange(createRange(nodes));
   }
 
-  function addMarkings(editableDiv, issues: Issue[]) {
+  function addMarkings(editableDiv, issues:Issue[]) {
     var range = [0, 0];
     var rangyRange = rangy.createRange();
-    rangyRange.selectCharacters(editableDiv, range[0], range[1]);
+    rangyRange.setStart(editableDiv, 0);
+    rangyRange.setEnd(editableDiv, 0);
     issues.forEach((issue:Issue) => {
+      var domPositionStart = utils.moveDomPosition({
+        node: rangyRange.startContainer,
+        offset: rangyRange.startOffset
+      }, issue.range[0] - range[0]);
+      rangyRange.setStart(domPositionStart.node, domPositionStart.offset);
       rangyRange.collapse(true);
-      rangyRange.moveStart('character', issue.range[0] - range[0]);
-      rangyRange.moveEnd('character', issue.range[1] - issue.range[0]);
+      var domPositionEnd = utils.moveDomPosition({
+        node: rangyRange.startContainer,
+        offset: rangyRange.startOffset
+      }, issue.range[1] - issue.range[0]);
+      rangyRange.setEnd(domPositionEnd.node, domPositionEnd.offset);
       addMarkingToRangyRange(rangyRange, issue.type, issue.id);
       range = issue.range;
     });
@@ -52,7 +61,7 @@ module marcolix {
   interface EditorProps {
     issues: Issue[]
     selectedIssue: Issue
-    onCursorOverIssue: (issueId: string) => void
+    onCursorOverIssue: (issueId:string) => void
   }
 
   export class EditorComponent extends React.Component<EditorProps,any> {
@@ -65,7 +74,7 @@ module marcolix {
     }
 
     getText() {
-      return rangy.innerText(this.getEditableDiv());
+      return utils.extractText(this.getEditableDiv());
     }
 
     componentDidMount() {
@@ -79,16 +88,16 @@ module marcolix {
         'them from going thin you should box a little place off so only the little pigs can get in it that is' +
         'so they can ge out of the way of there mother.  Some people put a light in with theme to geep them warm. You have ' +
         'to make shore that mother. ';
-      //editableDiv.textContent = _.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 20) + _.repeat(textWithIssues, 2);
+      editableDiv.textContent = _.repeat(_.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 40) + _.repeat(textWithIssues, 2), 2);
       //editableDiv.textContent = _.repeat(longDummyText, 0) + _.repeat(issueFreeDummyText, 0) + _.repeat(textWithIssues, 2);
-      editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
+      //editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
       //editableDiv.textContent = 'This is an test. This is an test. This is an test. This is an test.';
       //setInterval(this.checkForChange, 5000);
     }
 
     checkForCursorChange = () => {
       var sel = rangy.getSelection();
-      if (sel.rangeCount>0 && sel.isCollapsed) {
+      if (sel.rangeCount > 0 && sel.isCollapsed) {
         var range = sel.getRangeAt(0);
         var el = range.startContainer;
         var parent = el.parentNode;
@@ -159,7 +168,7 @@ module marcolix {
     render() {
       return div({
         className: 'editor', contentEditable: true, ref: 'editableDiv', spellCheck: false,
-        onKeyDown: this.checkForCursorChange,onKeyUp: this.checkForCursorChange,onClick: this.checkForCursorChange
+        onKeyDown: this.checkForCursorChange, onKeyUp: this.checkForCursorChange, onClick: this.checkForCursorChange
       });
     }
 

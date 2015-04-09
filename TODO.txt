@@ -1,7 +1,9 @@
 Doing:
 
 TODO:
-    * Speed Up more: Add Markings
+    * Handle <Br/> in text extraction / markings
+    * Handle nested divs somehow (text extraction / markings, flatten?)
+    * Clever check as you type (wait for user to pause typing)
     * Prevent to flag around cursor when typing a new word
     * Optimize Card Rendering / Expanded card
     * Check as you type (partial text request)
@@ -10,7 +12,6 @@ TODO:
     * Check as you type (partial check result)
     * Fine tuning of Check as you type
     * Show Flesch Reading Ease
-    * Clever check as you type (wait for user to pause typing)
     * Fixed wrong WHITESPACE_RULE (repeated whitespace) at end of text
     * Fix missing white space issues on sentence borders, caused by sentence segmentation
     * Show Number of words and check speed
@@ -47,6 +48,7 @@ Done:
     * Scroll in editor to selected issue [0:45]
     * Scroll in sidebar to issue under cursor [1:00]
     * Fixed "User typing while checking causes misaligned markings" bug [2:35]
+    * Speed Up more: Add Markings (500->120), Extraction (300->3) [4:05]
 
 Learned:
     * Test Performance (of libraries) early

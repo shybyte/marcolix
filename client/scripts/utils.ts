@@ -69,4 +69,93 @@ module marcolix.utils {
     })
   }
 
+  function isBreakingElement(node:Element | Node) {
+    return node['tagName'] === 'DIV';
+  }
+
+
+  export function extractText(node:Node):string {
+    var childNodes = node.childNodes;
+    return _.map(childNodes, (child, i)=> {
+      switch (child.nodeType) {
+        case Node.ELEMENT_NODE:
+          var childElement = child;
+          var grandChildrenText = extractText(childElement);
+          var lastChild = childNodes[i - 1];
+          if (isBreakingElement(childElement)) {
+            //console.log('lastChild:', lastChild);
+            if (lastChild && !isBreakingElement(lastChild)) {
+              return '\n' + grandChildrenText + '\n';
+            } else {
+              return grandChildrenText + '\n';
+            }
+          } else {
+            return grandChildrenText;
+          }
+          return grandChildrenText;
+        case Node.TEXT_NODE:
+        default:
+          return child.textContent;
+      }
+    }).join('');
+  }
+
+  export interface DomPosition {
+    node: Node
+    offset: number
+  }
+
+  function findAncestorWithSibling(node:Node) {
+    var currentNode = node.parentNode;
+    while (!currentNode.nextSibling && currentNode.parentNode !== currentNode) {
+      currentNode = currentNode.parentNode;
+    }
+    return currentNode;
+  }
+
+  function virtualNodeLength(node:Node) {
+    if ((node.nextSibling && isBreakingElement(node.nextSibling))
+      || (node.nodeType === Node.TEXT_NODE && (!node.nextSibling) && isBreakingElement(node.parentNode))
+    ) {
+      return node.textContent.length + 1;
+    } else {
+      return node.textContent.length;
+    }
+  }
+
+  export function moveDomPosition(startPos:DomPosition, characterCount:number):DomPosition {
+    var currentNode = startPos.node;
+    var currentNodeCharacterPos = 0 - startPos.offset;
+    //debugger;
+    while (currentNodeCharacterPos <= characterCount && currentNode) {
+      if (currentNode.nodeType === Node.TEXT_NODE) {
+        var currentNodeLength = virtualNodeLength(currentNode);
+        if (characterCount - currentNodeCharacterPos < currentNodeLength) {
+          return {
+            node: currentNode,
+            offset: characterCount - currentNodeCharacterPos
+          };
+        } else if (currentNode.nextSibling) {
+          currentNodeCharacterPos += currentNodeLength;
+          currentNode = currentNode.nextSibling
+        } else {
+          currentNodeCharacterPos += currentNodeLength;
+          currentNode = findAncestorWithSibling(currentNode).nextSibling;
+        }
+      } else {
+        var currentElement = <HTMLElement> currentNode;
+        if (currentElement.firstChild && currentElement.style.display !== 'none') {
+          currentNode = currentElement.firstChild;
+        } else if (currentElement.nextSibling) {
+          currentNode = currentElement.nextSibling;
+        } else {
+          currentNode = findAncestorWithSibling(currentElement).nextSibling;
+        }
+      }
+    }
+
+    throw new Error('moveDomPosition did something wrong.');
+  }
+
+
 }

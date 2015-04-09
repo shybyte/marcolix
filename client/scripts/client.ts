@@ -41,7 +41,10 @@ module marcolix {
 
     check = (force?:boolean):Promise<any> => {
       console.log('Checking?');
+      var time = Date.now();
       var currentText = this.getEditorText();
+      var endTime = Date.now();
+      console.log('Time for TextExt:', endTime - time);
       if (!force && currentText === this.lastText) {
         return new Promise(resolve => resolve());
       }
