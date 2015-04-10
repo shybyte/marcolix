@@ -1,4 +1,14 @@
-export function splitIntoSentences(text) {
+import _ = require('lodash');
+
+export function splitIntoSentences(text:string) {
+  var splitted : string[] = text.split('.');
+  if(_.last(splitted).trim() === '') {
+    splitted.pop();
+  }
+  return splitted.map(s => s + '.');
+}
+
+export function splitIntoSentencesOrginal(text) {
   var abbrev, abbrevs, clean, i, sentences, tmp;
   tmp = text.split(/(\S.+?[.\?!])(?=\s+|$|")/g);
   sentences = [];

@@ -1,14 +1,15 @@
 Doing:
 
+
 TODO:
-    * Fix funny Illegal mapping bug
-    * Clever check as you type (wait for user to pause typing)
-    * Prevent to flag around cursor when typing a new word
-    * Optimize Card Rendering / Expanded card
     * Check as you type (partial text request)
         * Server state
         * Send Diff
     * Check as you type (partial check result)
+    * Clever check as you type (wait for user to pause typing)
+    * Prevent to flag around cursor when typing a new word
+    * Improve splitIntoSentences
+    * Optimize Card Rendering / Expanded card
     * Fine tuning of Check as you type
     * Show Flesch Reading Ease
     * Fixed wrong WHITESPACE_RULE (repeated whitespace) at end of text
@@ -50,6 +51,7 @@ Done:
     * Fixed "User typing while checking causes misaligned markings" bug [2:35]
     * Speed Up more: Add Markings (500->120), Extraction (300->3) [4:05]
     * Handle <br/>, <div><br>text</div> and <div><br></div> in text extraction / markings [5:35]
+    * Fix funny Illegal mapping bug "For me.  It is a problemm." [0:20]
 
 Learned:
     * Test Performance (of libraries) early
