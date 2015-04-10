@@ -1,8 +1,7 @@
 Doing:
 
 TODO:
-    * Handle <Br/> in text extraction / markings
-    * Handle nested divs somehow (text extraction / markings, flatten?)
+    * Fix funny Illegal mapping bug
     * Clever check as you type (wait for user to pause typing)
     * Prevent to flag around cursor when typing a new word
     * Optimize Card Rendering / Expanded card
@@ -19,6 +18,7 @@ TODO:
     * SmoothScroll (editor)
     * SmoothScroll (sidebar)
     * Prevent concurrent checks (on client)
+    * Handle nested divs somehow (text extraction / markings, flatten?)
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -49,6 +49,7 @@ Done:
     * Scroll in sidebar to issue under cursor [1:00]
     * Fixed "User typing while checking causes misaligned markings" bug [2:35]
     * Speed Up more: Add Markings (500->120), Extraction (300->3) [4:05]
+    * Handle <br/>, <div><br>text</div> and <div><br></div> in text extraction / markings [5:35]
 
 Learned:
     * Test Performance (of libraries) early

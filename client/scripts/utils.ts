@@ -70,10 +70,11 @@ module marcolix.utils {
   }
 
   function isBreakingElement(node:Element | Node) {
-    return node['tagName'] === 'DIV';
+    var tagName = node['tagName'];
+    return tagName === 'DIV' || tagName === 'BR';
   }
 
-
+  // TODO: Replace with call to extractTextMapping (after some performance testing)
   export function extractText(node:Node):string {
     var childNodes = node.childNodes;
     return _.map(childNodes, (child, i)=> {
@@ -84,15 +85,18 @@ module marcolix.utils {
           var lastChild = childNodes[i - 1];
           if (isBreakingElement(childElement)) {
             //console.log('lastChild:', lastChild);
-            if (lastChild && !isBreakingElement(lastChild)) {
+            if (lastChild && !isBreakingElement(lastChild) && grandChildrenText && grandChildrenText !== '\n') {
               return '\n' + grandChildrenText + '\n';
             } else {
-              return grandChildrenText + '\n';
+              if (grandChildrenText === '\n' && lastChild && isBreakingElement(lastChild)) {
+                return '\n';
+              } else {
+                return grandChildrenText + '\n';
+              }
             }
           } else {
             return grandChildrenText;
           }
-          return grandChildrenText;
         case Node.TEXT_NODE:
         default:
           return child.textContent;
@@ -100,62 +104,96 @@ module marcolix.utils {
     }).join('');
   }
 
+  interface TextMapping {
+    text: string
+    domPositions: DomPosition[]
+  }
+
+  export function textMapping(text:string, domPositions:DomPosition[]):TextMapping {
+    return {
+      text: text,
+      domPositions: domPositions
+    };
+  }
+
+  export function concatTextMappings(textMappings:TextMapping[]):TextMapping {
+    return {
+      text: textMappings.map(tm => tm.text).join(''),
+      domPositions: <DomPosition[]> _.flatten(textMappings.map(tm => tm.domPositions))
+    };
+  }
+
+  function domPosBehindLastChildren(textMapping:TextMapping) {
+    var lastGrandChildrenTextMappingDomPos:DomPosition = _.last(textMapping.domPositions);
+    return domPosition(lastGrandChildrenTextMappingDomPos.node, lastGrandChildrenTextMappingDomPos.offset + 1);
+  }
+
+  export function extractTextMapping(node:Node):TextMapping {
+    var childNodes = node.childNodes;
+    return concatTextMappings(_.map(childNodes, (child, i)=> {
+      //debugger;
+      switch (child.nodeType) {
+        case Node.ELEMENT_NODE:
+          var childElement = <HTMLElement> child;
+          var grandChildrenTextMapping = extractTextMapping(childElement);
+          var grandChildrenText = grandChildrenTextMapping.text;
+          var prevChild = childNodes[i - 1];
+
+          if (childElement.style.display === 'none') {
+            return textMapping('', []);
+          }
+
+          if (isBreakingElement(childElement)) {
+            //console.log('lastChild:', lastChild);
+            if (prevChild && !isBreakingElement(prevChild) && grandChildrenText && grandChildrenText !== '\n') {
+              return concatTextMappings([textMapping('\n', [
+                  domPosition(childElement, 0)]),
+                  grandChildrenTextMapping,
+                  textMapping('\n', [domPosBehindLastChildren(grandChildrenTextMapping)])
+                ]
+              );
+              //return '\n' + grandChildrenText + '\n';
+            } else {
+              if (grandChildrenText === '\n' && prevChild && isBreakingElement(prevChild)) {
+                return textMapping('\n', [domPosition(childElement, 0)]);
+                //return '\n';
+              } else if (child.childNodes.length > 0) {
+                return concatTextMappings([
+                    grandChildrenTextMapping,
+                    textMapping('\n', [domPosBehindLastChildren(grandChildrenTextMapping)])
+                  ]
+                );
+                //return grandChildrenText + '\n';
+              } else {
+                return textMapping('\n', [domPosition(child, 0)]);
+              }
+            }
+          } else {
+            return grandChildrenTextMapping;
+          }
+        case Node.TEXT_NODE:
+        default:
+          return textMapping(child.textContent, _.times(child.textContent.length, i => domPosition(child, i)));
+      }
+    }));
+  }
+
   export interface DomPosition {
     node: Node
     offset: number
   }
 
-  function findAncestorWithSibling(node:Node) {
-    var currentNode = node.parentNode;
-    while (!currentNode.nextSibling && currentNode.parentNode !== currentNode) {
-      currentNode = currentNode.parentNode;
-    }
-    return currentNode;
+  export function domPosition(node:Node, offset:number):DomPosition {
+    return {
+      node: node,
+      offset: offset
+    };
   }
 
-  function virtualNodeLength(node:Node) {
-    if ((node.nextSibling && isBreakingElement(node.nextSibling))
-      || (node.nodeType === Node.TEXT_NODE && (!node.nextSibling) && isBreakingElement(node.parentNode))
-    ) {
-      return node.textContent.length + 1;
-    } else {
-      return node.textContent.length;
-    }
+  export function reverseArray<T>(array:T[]):T[] {
+    var copy = array.concat();
+    copy.reverse();
+    return copy;
   }
-
-  export function moveDomPosition(startPos:DomPosition, characterCount:number):DomPosition {
-    var currentNode = startPos.node;
-    var currentNodeCharacterPos = 0 - startPos.offset;
-    //debugger;
-    while (currentNodeCharacterPos <= characterCount && currentNode) {
-      if (currentNode.nodeType === Node.TEXT_NODE) {
-        var currentNodeLength = virtualNodeLength(currentNode);
-        if (characterCount - currentNodeCharacterPos < currentNodeLength) {
-          return {
-            node: currentNode,
-            offset: characterCount - currentNodeCharacterPos
-          };
-        } else if (currentNode.nextSibling) {
-          currentNodeCharacterPos += currentNodeLength;
-          currentNode = currentNode.nextSibling
-        } else {
-          currentNodeCharacterPos += currentNodeLength;
-          currentNode = findAncestorWithSibling(currentNode).nextSibling;
-        }
-      } else {
-        var currentElement = <HTMLElement> currentNode;
-        if (currentElement.firstChild && currentElement.style.display !== 'none') {
-          currentNode = currentElement.firstChild;
-        } else if (currentElement.nextSibling) {
-          currentNode = currentElement.nextSibling;
-        } else {
-          currentNode = findAncestorWithSibling(currentElement).nextSibling;
-        }
-      }
-    }
-
-    throw new Error('moveDomPosition did something wrong.');
-  }
-
 
 }

@@ -25,8 +25,8 @@ module marcolix {
     lastText = ''
 
     componentDidMount() {
-      this.check();
-      this.startNextCheckTimeout();
+      //this.check();
+      //this.startNextCheckTimeout();
     }
 
     startNextCheckTimeout() {
@@ -43,8 +43,9 @@ module marcolix {
       console.log('Checking?');
       var time = Date.now();
       var currentText = this.getEditorText();
+      console.log('Current Text:', currentText.replace(/ /g, '_').replace(/\n/g,'\\n\n'));
       var endTime = Date.now();
-      console.log('Time for TextExt:', endTime - time);
+      console.log('Time for TextExt:', endTime - time, currentText.split(/[\s\n]/).length);
       if (!force && currentText === this.lastText) {
         return new Promise(resolve => resolve());
       }
@@ -99,6 +100,7 @@ module marcolix {
         button({className: 'checkButton', onClick: () => this.check(true)}, 'Check'),
         div({},
           div({className: 'editorCol'}, Editor({
+            checkReport: this.state.checkReport,
             issues: this.state.issues,
             selectedIssue: this.state.selectedIssue,
             onCursorOverIssue: this.onCursorOverIssue,

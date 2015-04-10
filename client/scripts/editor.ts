@@ -37,28 +37,29 @@ module marcolix {
   }
 
   function addMarkings(editableDiv, issues:Issue[]) {
-    var range = [0, 0];
+    var textMapping = utils.extractTextMapping(editableDiv);
+    console.log('textMapping: ',textMapping);
     var rangyRange = rangy.createRange();
-    rangyRange.setStart(editableDiv, 0);
-    rangyRange.setEnd(editableDiv, 0);
-    issues.forEach((issue:Issue) => {
-      var domPositionStart = utils.moveDomPosition({
-        node: rangyRange.startContainer,
-        offset: rangyRange.startOffset
-      }, issue.range[0] - range[0]);
-      rangyRange.setStart(domPositionStart.node, domPositionStart.offset);
-      rangyRange.collapse(true);
-      var domPositionEnd = utils.moveDomPosition({
-        node: rangyRange.startContainer,
-        offset: rangyRange.startOffset
-      }, issue.range[1] - issue.range[0]);
-      rangyRange.setEnd(domPositionEnd.node, domPositionEnd.offset);
-      addMarkingToRangyRange(rangyRange, issue.type, issue.id);
-      range = issue.range;
+    var reversedIssues = utils.reverseArray(issues);
+    reversedIssues.forEach((issue:Issue, i) => {
+      var prevIssue = reversedIssues[i - 1];
+      if (prevIssue && issue.range[1] >= prevIssue.range[0]) {
+        textMapping = utils.extractTextMapping(editableDiv);
+      }
+      var startPos = textMapping.domPositions[issue.range[0]];
+      var endPos = textMapping.domPositions[issue.range[1]];
+      if (startPos && endPos) {
+        rangyRange.setStart(startPos.node, startPos.offset);
+        rangyRange.setEnd(endPos.node, endPos.offset);
+        addMarkingToRangyRange(rangyRange, issue.type, issue.id);
+      } else {
+        console.error('Illegal mapping for :', issue, startPos, endPos);
+      }
     });
   }
 
   interface EditorProps {
+    checkReport: CheckReport
     issues: Issue[]
     selectedIssue: Issue
     onCursorOverIssue: (issueId:string) => void
@@ -88,9 +89,14 @@ module marcolix {
         'them from going thin you should box a little place off so only the little pigs can get in it that is' +
         'so they can ge out of the way of there mother.  Some people put a light in with theme to geep them warm. You have ' +
         'to make shore that mother. ';
-      editableDiv.textContent = _.repeat(_.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 40) + _.repeat(textWithIssues, 2), 2);
+      //editableDiv.textContent = _.repeat(_.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 40) + _.repeat(textWithIssues, 2), 2); //500->120
       //editableDiv.textContent = _.repeat(longDummyText, 0) + _.repeat(issueFreeDummyText, 0) + _.repeat(textWithIssues, 2);
       //editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
+      editableDiv.textContent = textWithIssues;
+      //editableDiv.innerHTML = 'Test<div>Testt</div> ';
+      //editableDiv.innerHTML = _.repeat('This is a good text.<br>I likee it.<br/>But it hass errorrs.', 1);
+      //editableDiv.innerHTML = _.repeat('This is a good text.<div><br></div><div><br></div>I likee it.<br/>But it hass errorrs.', 1);
+      //editableDiv.innerHTML = _.repeat('Test.<div><span>Testt</span><br><div><br></div>I likee it.</div>', 1);
       //editableDiv.textContent = 'This is an test. This is an test. This is an test. This is an test.';
       //setInterval(this.checkForChange, 5000);
     }
@@ -145,7 +151,7 @@ module marcolix {
 
 
     componentWillReceiveProps(nextProps:EditorProps) {
-      if (nextProps.issues !== this.props.issues) {
+      if (nextProps.checkReport !== this.props.checkReport) {
         this.setState({isRefreshOfMarkingsNeeded: true});
       }
     }
@@ -157,7 +163,6 @@ module marcolix {
 
     replaceIssue = (issue:Issue, replacementIndex) => {
       console.log('Replace in editor', issue, replacementIndex);
-      var itemId = issue.id;
       var markingNodes = this.getMarkingNodes(issue);
       if (markingNodes.length > 0) {
         setRangeText(markingNodes, issue.replacements[replacementIndex]);
