@@ -17,11 +17,6 @@ module marcolix.utils {
     });
   }
 
-  interface SimpleDiff {
-    deletionRange: [number,number]
-    insertionLength: number
-  }
-
   function lengthOfCommonBeginning(s1:string, s2:string):number {
     var indexOfFirstDifference = _.findIndex(s1, (char1, i) => char1 !== s2[i]);
     return indexOfFirstDifference == -1 ? s1.length : indexOfFirstDifference;
@@ -39,14 +34,17 @@ module marcolix.utils {
     if (oldText === newText) {
       return {
         deletionRange: [oldText.length, oldText.length],
-        insertionLength: 0
+        insertionLength: 0,
+        insertion: ''
       };
     }
     var deletionRangeStart = lengthOfCommonBeginning(oldText, newText);
     var commonEndingLengthAfterDeletion = lengthOfCommonEnding(oldText.slice(deletionRangeStart), newText.slice(deletionRangeStart));
+    var insertionLength = newText.length - commonEndingLengthAfterDeletion - deletionRangeStart;
     return {
       deletionRange: [deletionRangeStart, oldText.length - commonEndingLengthAfterDeletion],
-      insertionLength: newText.length - commonEndingLengthAfterDeletion - deletionRangeStart
+      insertionLength: insertionLength,
+      insertion: newText.substr(deletionRangeStart, insertionLength)
     };
   }
 

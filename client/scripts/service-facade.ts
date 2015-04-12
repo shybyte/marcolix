@@ -19,4 +19,19 @@ module marcolix.service {
     //  data: checkCommandArguments
     //});
   }
+
+
+  export function checkLocal(diff: SimpleDiff):Promise<CheckReport> {
+    var checkCommandArguments:LocalCheckCommandArguments = {
+      diff: diff
+    };
+
+    return new Promise(resolve => {
+      socket.emit('checkLocal', checkCommandArguments, checkReport => {
+        resolve(checkReport);
+      });
+    });
+  }
+
+
 }

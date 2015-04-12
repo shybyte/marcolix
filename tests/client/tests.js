@@ -42,47 +42,55 @@
   test("empty string", function (assert) {
     assert.deepEqual(simpleDiff('', ''), {
       deletionRange: [0, 0],
-      insertionLength: 0
+      insertionLength: 0,
+      insertion: ''
     });
   });
 
   test("same string", function (assert) {
     assert.deepEqual(simpleDiff('same', 'same'), {
       deletionRange: [4, 4],
-      insertionLength: 0
+      insertionLength: 0,
+      insertion: ''
     });
   });
 
   test("just insertion", function (assert) {
     assert.deepEqual(simpleDiff('0123', '01X23'), {
       deletionRange: [2, 2],
-      insertionLength: 1
+      insertionLength: 1,
+      insertion: 'X'
     });
     assert.deepEqual(simpleDiff('0123', '01XX23'), {
       deletionRange: [2, 2],
-      insertionLength: 2
+      insertionLength: 2,
+      insertion: 'XX'
     });
   });
 
   test("just deletion", function (assert) {
     assert.deepEqual(simpleDiff('0123', '013'), {
       deletionRange: [2, 3],
-      insertionLength: 0
+      insertionLength: 0,
+      insertion: ''
     });
     assert.deepEqual(simpleDiff('0123', '03'), {
       deletionRange: [1, 3],
-      insertionLength: 0
+      insertionLength: 0,
+      insertion: ''
     });
   });
 
   test("insertion and deletion", function (assert) {
     assert.deepEqual(simpleDiff('0123', '01X3'), {
       deletionRange: [2, 3],
-      insertionLength: 1
+      insertionLength: 1,
+      insertion: 'X'
     });
     assert.deepEqual(simpleDiff('0123', '0XX3'), {
       deletionRange: [1, 3],
-      insertionLength: 2
+      insertionLength: 2,
+      insertion: 'XX'
     });
   });
 
@@ -90,22 +98,26 @@
   test("repeating an existing char", function (assert) {
     assert.deepEqual(simpleDiff('0123', '01223'), {
       deletionRange: [3, 3],
-      insertionLength: 1
+      insertionLength: 1,
+      insertion: '2'
     });
     assert.deepEqual(simpleDiff('0123', '012223'), {
       deletionRange: [3, 3],
-      insertionLength: 2
+      insertionLength: 2,
+      insertion: '22'
     });
   });
 
   test("deleting an existing char", function (assert) {
     assert.deepEqual(simpleDiff('01223', '0123'), {
       deletionRange: [3, 4],
-      insertionLength: 0
+      insertionLength: 0,
+      insertion: ''
     });
     assert.deepEqual(simpleDiff('012223', '0123'), {
       deletionRange: [3, 5],
-      insertionLength: 0
+      insertionLength: 0,
+      insertion: ''
     });
   });
 

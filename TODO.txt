@@ -1,8 +1,4 @@
 Doing:
-    * Check as you type (partial text request)
-        - Switch to WebSockets for checking [1:00]
-        * Server state
-        * Send Diff
 
 
 TODO:
@@ -21,6 +17,8 @@ TODO:
     * SmoothScroll (sidebar)
     * Prevent concurrent checks (on client)
     * Handle nested divs somehow (text extraction / markings, flatten?)
+    * Fix mapping problem at end of text
+    * Clean up memory after connection end
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -53,6 +51,9 @@ Done:
     * Speed Up more: Add Markings (500->120), Extraction (300->3) [4:05]
     * Handle <br/>, <div><br>text</div> and <div><br></div> in text extraction / markings [5:35]
     * Fix funny Illegal mapping bug "For me.  It is a problemm." [0:20]
+    * Check as you type (partial text request)
+       * Switch to WebSockets for checking [1:00]
+       * Send und use Diff [1:00]
 
 Learned:
     * Test Performance (of libraries) early

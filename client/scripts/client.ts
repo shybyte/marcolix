@@ -25,8 +25,8 @@ module marcolix {
     lastText = ''
 
     componentDidMount() {
-      //this.check();
-      //this.startNextCheckTimeout();
+      this.check();
+      this.startNextCheckTimeout();
     }
 
     startNextCheckTimeout() {
@@ -49,9 +49,20 @@ module marcolix {
       if (!force && currentText === this.lastText) {
         return new Promise(resolve => resolve());
       }
-      console.log('Checking!');
-      this.lastText = currentText;
-      return service.check(currentText).then(this.onCheckResult);
+      //console.log('Checking!');
+      //this.lastText = currentText;
+      //return service.check(currentText).then(this.onCheckResult);
+      if (this.lastText) {
+        console.log('Checking local...');
+        var checkResultPromise = service.checkLocal(utils.simpleDiff(this.lastText, currentText));
+        this.lastText = currentText;
+        return checkResultPromise.then(this.onCheckResult);
+      } else {
+        console.log('Checking global...');
+        this.lastText = currentText;
+        return service.check(currentText).then(this.onCheckResult);
+      }
+
     }
 
     onCheckResult = (checkReport:CheckReport) => {
