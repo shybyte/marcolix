@@ -1,10 +1,11 @@
 Doing:
+    * Check as you type (partial text request)
+        - Switch to WebSockets for checking [1:00]
+        * Server state
+        * Send Diff
 
 
 TODO:
-    * Check as you type (partial text request)
-        * Server state
-        * Send Diff
     * Check as you type (partial check result)
     * Clever check as you type (wait for user to pause typing)
     * Prevent to flag around cursor when typing a new word

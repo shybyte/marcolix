@@ -139,10 +139,11 @@ function cacheIssues(language:string, sentences:Sentence[], newIssues:IssueWithi
   });
 }
 
-export function check(req, res) {
+
+export function checkGlobal(checkRequest:marcolix.CheckCommandArguments):Promise<marcolix.CheckReport> {
   var startTime = Date.now();
-  var language = req.query.language || req.body.language;
-  var text = req.query.text || req.body.text;
+  var language = checkRequest.language;
+  var text = checkRequest.text;
   var sentencesTexts = nlp.splitIntoSentences(text);
   var sentences = getSentences(sentencesTexts);
   var sentencePartition = _.partition(sentences, s => cache[makeCacheKey(language, s.text)])
@@ -150,23 +151,29 @@ export function check(req, res) {
   var unCachedSentences = sentencePartition[1];
   var unCachedUnEmptySentences = _.reject(unCachedSentences, s => s.text.trim() == '');
 
-  // slow down for testing
-  setTimeout(function () {
-    checkSentences(unCachedUnEmptySentences, language).then(function (newIssues) {
-      //console.log('newIssues:', newIssues);
-      var issuesFromCache = <Issue[]> _.flatten(cachedSentences.map(s => getIssuesFromCache(language, s)));
-      cacheIssues(language, unCachedUnEmptySentences, newIssues);
-      var allIssues = _.sortBy(newIssues.concat(issuesFromCache), issue => issue.range[0]);
-      var allIssuesCleaned = map(allIssues, issue => {
-        delete issue.sentence;
-        issue.id = _.uniqueId();
-      });
-      console.log('Time', Date.now() - startTime);
-      res.json({issues: allIssuesCleaned});
+  return checkSentences(unCachedUnEmptySentences, language).then(function (newIssues) {
+    //console.log('newIssues:', newIssues);
+    var issuesFromCache = <Issue[]> _.flatten(cachedSentences.map(s => getIssuesFromCache(language, s)));
+    cacheIssues(language, unCachedUnEmptySentences, newIssues);
+    var allIssues = _.sortBy(newIssues.concat(issuesFromCache), issue => issue.range[0]);
+    var allIssuesCleaned = map(allIssues, issue => {
+      delete issue.sentence;
+      issue.id = _.uniqueId();
     });
-  }, 10);
+    console.log('Time', Date.now() - startTime);
+    return {issues: allIssuesCleaned};
+  });
 
 };
+
+export function checkRoute(req, res) {
+  checkGlobal({
+    text: req.query.text || req.body.text,
+    language: req.query.language || req.body.language
+  }).done(checkReport => {
+    res.json(checkReport);
+  });
+}
 
 export function clearCache(req, res) {
   cache = {};
