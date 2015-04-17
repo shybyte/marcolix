@@ -13,4 +13,10 @@ declare module marcolix {
   export interface CheckReport {
     issues: Issue[]
   }
+
+  export interface LocalCheckReport {
+    newIssues: Issue[]
+    removedIssueIDs: string[]
+  }
+
 }

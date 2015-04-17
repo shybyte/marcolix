@@ -1,7 +1,7 @@
 module marcolix.service {
   var socket = io();
 
-  export function check(documentContent:string, options?:Object):Promise<CheckReport> {
+  export function check(documentContent:string, options?:Object):Promise<LocalCheckReport> {
     var checkCommandArguments:CheckCommandArguments = {
       text: documentContent,
       language: 'EN-US'
@@ -21,7 +21,7 @@ module marcolix.service {
   }
 
 
-  export function checkLocal(diff: SimpleDiff):Promise<CheckReport> {
+  export function checkLocal(diff: SimpleDiff):Promise<LocalCheckReport> {
     var checkCommandArguments:LocalCheckCommandArguments = {
       diff: diff
     };

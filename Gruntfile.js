@@ -114,6 +114,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['build', 'serve']);
   grunt.registerTask('build', ['bower:install', 'less:dev','mochaTest']);
   grunt.registerTask('serve', ['concurrent']);
+  grunt.registerTask('watch-ts-server', ['watch:typescriptServer']);
 
   grunt.registerTask('ts', ['typescript:server']);
 };

@@ -11,8 +11,12 @@ import nlp = require('./nlp');
 var convertCheckReport = convertCheckReportModule.convertCheckReport;
 var request = <(any) => any> Promise.promisify(requestModule);
 var parseXML = Promise.promisify(parseXmlModule.parseString);
+
+var sharedUtils = require('../shared/shared-utils');
+
 import Issue = marcolix.Issue;
 import CheckReport = marcolix.CheckReport;
+import SimpleDiff = marcolix.SimpleDiff;
 
 
 var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081'];
@@ -139,7 +143,6 @@ function cacheIssues(language:string, sentences:Sentence[], newIssues:IssueWithi
   });
 }
 
-
 export function checkGlobal(checkRequest:marcolix.CheckCommandArguments):Promise<marcolix.CheckReport> {
   var startTime = Date.now();
   var language = checkRequest.language;
@@ -173,6 +176,15 @@ export function checkRoute(req, res) {
   }).done(checkReport => {
     res.json(checkReport);
   });
+}
+
+export function createLocalCheckReport(diff:SimpleDiff, lastCheckReport:CheckReport, currentCheckReport:CheckReport):marcolix.LocalCheckReport {
+  var insertionRange = [diff.deletionRange[0], diff.deletionRange[0] + diff.insertionLength];
+  var removedIssues = lastCheckReport.issues.filter(issue => sharedUtils.isRangeOverlapping(issue.range, diff.deletionRange));
+  return {
+    newIssues: currentCheckReport.issues.filter(issue => sharedUtils.isRangeOverlapping(issue.range, insertionRange)),
+    removedIssueIDs: removedIssues.map(issue => issue.id)
+  }
 }
 
 export function clearCache(req, res) {

@@ -1,3 +1,4 @@
+/// <reference path="../../shared/shared-utils" />
 /// <reference path="editor" />
 /// <reference path="sidebar" />
 /// <reference path="utils" />
@@ -8,7 +9,7 @@ module marcolix {
   var button = React.createFactory('button');
 
   interface AppState {
-    checkReport: CheckReport
+    checkReport: LocalCheckReport
     issues: Issue[]
     selectedIssue: Issue
     issueUnderCursor: Issue
@@ -43,7 +44,7 @@ module marcolix {
       console.log('Checking?');
       var time = Date.now();
       var currentText = this.getEditorText();
-      console.log('Current Text:', currentText.replace(/ /g, '_').replace(/\n/g,'\\n\n'));
+      console.log('Current Text:', currentText.replace(/ /g, '_').replace(/\n/g, '\\n\n'));
       var endTime = Date.now();
       console.log('Time for TextExt:', endTime - time, currentText.split(/[\s\n]/).length);
       if (!force && currentText === this.lastText) {
@@ -65,12 +66,14 @@ module marcolix {
 
     }
 
-    onCheckResult = (checkReport:CheckReport) => {
+    onCheckResult = (checkReport:LocalCheckReport) => {
       var currentText = this.getEditorText();
       var diff = utils.simpleDiff(this.lastText, currentText);
       this.changeState((s:AppState) => {
         s.checkReport = checkReport;
-        s.issues = utils.displaceIssues(checkReport.issues, diff);
+        var oldRemainingIssues = _.reject(s.issues, issue => _.contains(checkReport.removedIssueIDs, issue.id));
+        var newDisplacedIssues = sharedUtils.displaceIssues(checkReport.newIssues, diff);
+        s.issues = _.sortBy(oldRemainingIssues.concat(newDisplacedIssues), (issue:Issue) => issue.range[0]);
       });
     }
 

@@ -2,6 +2,10 @@ import assert = require("assert");
 import _ = require("lodash");
 import checking = require("../../server/checking");
 import Range = marcolix.Range;
+import Issue = marcolix.Issue;
+import CheckReport = marcolix.CheckReport;
+import SimpleDiff = marcolix.SimpleDiff;
+
 
 function simpleIssue(surface:string, range:Range) {
   return {
@@ -76,5 +80,49 @@ describe('fixIssueRanges', function () {
     assert.deepEqual(fixedIssues[0].range, [10, 12]);
     assert.deepEqual(fixedIssues[1].range, [20, 21]);
   })
+
+});
+
+describe('createLocalCheckReport', function () {
+  it('new issue in the middle', function () {
+    var simpleDiff:SimpleDiff = {
+      deletionRange: [20, 20],
+      insertionLength: 10,
+      insertion: 'ErrorNew  '
+    }
+    var lastCheckReport:CheckReport = {
+      issues: [simpleIssue('Error1', [10, 16]), simpleIssue('Error2', [20, 26])]
+    }
+    var newIssue = simpleIssue('ErrorNew', [20, 28]);
+    var currentCheckReport:CheckReport = {
+      issues: [simpleIssue('Error1', [10, 16]), newIssue, simpleIssue('Error2', [30, 36])]
+    }
+
+    var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport);
+
+    assert.deepEqual(localCheckReport.newIssues, [newIssue]);
+    assert.deepEqual(localCheckReport.removedIssueIDs, []);
+  });
+
+  it('replaced issue in the middle', function () {
+    var simpleDiff:SimpleDiff = {
+      deletionRange: [20, 30],
+      insertionLength: 10,
+      insertion: 'ErrorNew  '
+    }
+    var oldIssue = simpleIssue('ErrorOld', [20, 28]);
+    var lastCheckReport:CheckReport = {
+      issues: [simpleIssue('Error1', [10, 16]), oldIssue, simpleIssue('Error3', [30, 26])]
+    }
+    var newIssue = simpleIssue('ErrorNew', [20, 28]);
+    var currentCheckReport:CheckReport = {
+      issues: [simpleIssue('Error1', [10, 16]), newIssue, simpleIssue('Error3', [30, 36])]
+    }
+
+    var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport);
+
+    assert.deepEqual(localCheckReport.newIssues, [newIssue]);
+    assert.deepEqual(localCheckReport.removedIssueIDs, [oldIssue.id]);
+  });
 
 });

@@ -38,7 +38,7 @@ module marcolix {
 
   function addMarkings(editableDiv, issues:Issue[]) {
     var textMapping = utils.extractTextMapping(editableDiv);
-    console.log('textMapping: ',textMapping);
+    console.log('textMapping: ', textMapping);
     var rangyRange = rangy.createRange();
     var reversedIssues = utils.reverseArray(issues);
     reversedIssues.forEach((issue:Issue, i) => {
@@ -59,8 +59,7 @@ module marcolix {
   }
 
   interface EditorProps {
-    checkReport: CheckReport
-    issues: Issue[]
+    checkReport: LocalCheckReport
     selectedIssue: Issue
     onCursorOverIssue: (issueId:string) => void
   }
@@ -91,8 +90,8 @@ module marcolix {
         'to make shore that mother. ';
       //editableDiv.textContent = _.repeat(_.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 40) + _.repeat(textWithIssues, 2), 2); //500->120
       //editableDiv.textContent = _.repeat(longDummyText, 0) + _.repeat(issueFreeDummyText, 0) + _.repeat(textWithIssues, 2);
-      editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
-      //editableDiv.textContent = textWithIssues;
+      //editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
+      editableDiv.textContent = textWithIssues;
       //editableDiv.innerHTML = 'Test<div>Testt</div> ';
       //editableDiv.innerHTML = _.repeat('This is a good text.<br>I likee it.<br/>But it hass errorrs.', 1);
       //editableDiv.innerHTML = _.repeat('This is a good text.<div><br></div><div><br></div>I likee it.<br/>But it hass errorrs.', 1);
@@ -114,17 +113,17 @@ module marcolix {
     }
 
     componentDidUpdate() {
+      var props = this.props;
+      if (!props.checkReport) {
+        return;
+      }
       var editableDiv = this.getEditableDiv();
-
       if (this.state.isRefreshOfMarkingsNeeded) {
         console.log('Refresh Markings ...');
         var time = Date.now();
         var savedSelection = rangy.saveSelection();
-        utils.removeMarkings(editableDiv);
-        if (!this.props.issues) {
-          return;
-        }
-        addMarkings(editableDiv, this.props.issues);
+        utils.removeMarkings(editableDiv, props.checkReport.removedIssueIDs);
+        addMarkings(editableDiv, props.checkReport.newIssues);
         if (savedSelection) {
           rangy.restoreSelection(savedSelection);
         }
@@ -133,8 +132,8 @@ module marcolix {
         this.setState({isRefreshOfMarkingsNeeded: false});
       }
 
-      if (this.props.selectedIssue) {
-        var markingNodes = this.getMarkingNodes(this.props.selectedIssue);
+      if (props.selectedIssue) {
+        var markingNodes = this.getMarkingNodes(props.selectedIssue);
         if (markingNodes.length > 0) {
           selectText(markingNodes);
           var markingTop = markingNodes[0].offsetTop;

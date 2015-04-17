@@ -2,7 +2,7 @@ Doing:
 
 
 TODO:
-    * Check as you type (partial check result)
+    * Test and debug Check as you type
     * Clever check as you type (wait for user to pause typing)
     * Prevent to flag around cursor when typing a new word
     * Improve splitIntoSentences
@@ -19,6 +19,7 @@ TODO:
     * Handle nested divs somehow (text extraction / markings, flatten?)
     * Fix mapping problem at end of text
     * Clean up memory after connection end
+    * Handle lost socket connection (e.g. currentText is null in check local)
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -54,6 +55,7 @@ Done:
     * Check as you type (partial text request)
        * Switch to WebSockets for checking [1:00]
        * Send und use Diff [1:00]
+    * Check as you type (partial check result) [4:00]
 
 Learned:
     * Test Performance (of libraries) early

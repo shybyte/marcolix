@@ -3,32 +3,41 @@
 
   var testDiv = document.getElementById('testDiv');
 
-  QUnit.module("removeMarkings");
+  QUnit.module("removeAllMarkings");
 
-  var removeMarkings = marcolix.utils.removeMarkings;
+  var removeAllMarkings = marcolix.utils.removeAllMarkings;
 
   test("Should keep simple text intact.", function (assert) {
     testDiv.innerHTML = 'test';
-    removeMarkings(testDiv);
+    removeAllMarkings(testDiv);
     assert.equal(testDiv.innerHTML, 'test');
   });
 
   test("Should keep simple text inside of markings.", function (assert) {
     testDiv.innerHTML = '<span itemId="1">test</span>';
-    removeMarkings(testDiv);
+    removeAllMarkings(testDiv);
     assert.equal(testDiv.innerHTML, 'test');
   });
 
   test("Nested markings", function (assert) {
     testDiv.innerHTML = '<span itemId="1"><span itemId="2">test</span></span>';
-    removeMarkings(testDiv);
+    removeAllMarkings(testDiv);
     assert.equal(testDiv.innerHTML, 'test');
   });
 
   test("Multiple children inside of the marking", function (assert) {
     testDiv.innerHTML = '<span itemId="1">test1 <span itemId="2">test2</span> test3</span>';
-    removeMarkings(testDiv);
+    removeAllMarkings(testDiv);
     assert.equal(testDiv.innerHTML, 'test1 test2 test3');
+  });
+
+  QUnit.module("removeMarkings");
+  var removeMarkings = marcolix.utils.removeMarkings;
+
+  test("Remove only the intended marking", function (assert) {
+    testDiv.innerHTML = '<span itemid="1">test1</span> <span itemid="2">test2</span> <span itemid="3">test3</span>';
+    removeMarkings(testDiv,['2']);
+    assert.equal(testDiv.innerHTML, '<span itemid="1">test1</span> test2 <span itemid="3">test3</span>');
   });
 
 

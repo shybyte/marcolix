@@ -5,7 +5,22 @@ module marcolix.utils {
     return clone;
   }
 
-  export function removeMarkings(node:HTMLElement) {
+  export function removeMarkings(node:HTMLElement, markingIDs: string[]) {
+    var markings = node.querySelectorAll('span[itemId]');
+    var shouldMarkingGetRemoved = marking => _.contains(markingIDs, marking.attributes['itemId'].value);
+    var markingsToRemove = _.filter(markings, shouldMarkingGetRemoved);
+    _.forEach(markingsToRemove, (marking:Element) => {
+      var parent = marking.parentNode;
+      var childNodesArray = _.map(marking.childNodes, _.identity);
+      childNodesArray.forEach((childNode:Node) => {
+        parent.insertBefore(childNode, marking);
+      });
+      parent.removeChild(marking);
+    });
+  }
+
+
+  export function removeAllMarkings(node:HTMLElement) {
     var markings = node.querySelectorAll('span[itemId]');
     _.forEach(markings, (marking:Node) => {
       var parent = marking.parentNode;
@@ -46,25 +61,6 @@ module marcolix.utils {
       insertionLength: insertionLength,
       insertion: newText.substr(deletionRangeStart, insertionLength)
     };
-  }
-
-  function isRangeNotOverlapping(range1:[number,number], range2:[number,number]) {
-    return range1[0] >= range2[1] || range2[0] >= range1[1]
-  }
-
-  export function displaceIssues(issues:Issue[], diff:SimpleDiff):Issue[] {
-    var deletionRange = diff.deletionRange;
-    var unDeletedIssues = issues.filter(issue => isRangeNotOverlapping(issue.range, deletionRange));
-    var displacement = diff.insertionLength + (deletionRange[0] - deletionRange[1]);
-    return unDeletedIssues.map(issue => {
-      if (issue.range[1] < deletionRange[0]) {
-        return issue;
-      } else {
-        return set(issue, issue => {
-          issue.range = [issue.range[0] + displacement, issue.range[1] + displacement];
-        });
-      }
-    })
   }
 
   function isBreakingElement(node:Element | Node) {
