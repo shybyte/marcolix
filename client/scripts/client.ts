@@ -16,6 +16,11 @@ module marcolix {
   }
 
   export class MainComponent extends React.Component<any,AppState> {
+    isChecking = new Bacon.Bus()
+    replaceEventBus = new Bacon.Bus()
+    changePoll = Bacon.interval(10 * 1000, true)
+    lastText = ''
+
     state = {
       checkReport: null,
       issues: [],
@@ -23,36 +28,29 @@ module marcolix {
       issueUnderCursor: null
     }
 
-    lastText = ''
 
     componentDidMount() {
       this.check();
-      this.startNextCheckTimeout();
-    }
-
-    startNextCheckTimeout() {
-      setTimeout(() => {
-        this.check().then(() => {
-          this.startNextCheckTimeout();
+      this.getEditor().changeEventStream.debounce(500).merge(this.replaceEventBus).merge(this.changePoll)
+        .holdWhen(this.isChecking).throttle(100).onValue(() => {
+          this.check();
         });
-      }, 5000);
     }
 
-    getEditorText = () => (<EditorComponent> this.refs['editor']).getText();
+    getEditor = () => (<EditorComponent> this.refs['editor'])
+    getEditorText = () => this.getEditor().getText()
 
     check = (force?:boolean):Promise<any> => {
       console.log('Checking?');
       var time = Date.now();
       var currentText = this.getEditorText();
-      console.log('Current Text:', currentText.replace(/ /g, '_').replace(/\n/g, '\\n\n'));
+      //console.log('Current Text:', currentText.replace(/ /g, '_').replace(/\n/g, '\\n\n'));
       var endTime = Date.now();
       console.log('Time for TextExt:', endTime - time, currentText.split(/[\s\n]/).length);
       if (!force && currentText === this.lastText) {
         return new Promise(resolve => resolve());
       }
-      //console.log('Checking!');
-      //this.lastText = currentText;
-      //return service.check(currentText).then(this.onCheckResult);
+      this.isChecking.push(true);
       if (this.lastText) {
         console.log('Checking local...');
         var checkResultPromise = service.checkLocal(utils.simpleDiff(this.lastText, currentText));
@@ -75,6 +73,7 @@ module marcolix {
         var newDisplacedIssues = sharedUtils.displaceIssues(checkReport.newIssues, diff);
         s.issues = _.sortBy(oldRemainingIssues.concat(newDisplacedIssues), (issue:Issue) => issue.range[0]);
       });
+      this.isChecking.push(false);
     }
 
     changeState = (f:(s:AppState) => void) => {
@@ -90,13 +89,11 @@ module marcolix {
 
     onClickReplacement = (issue:Issue, index:number) => {
       console.log('Clicked Replacement:', issue, index);
-
-      var editor = <EditorComponent> this.refs['editor'];
-      editor.replaceIssue(issue, index);
-
+      this.getEditor().replaceIssue(issue, index);
       this.changeState(s => {
         s.issues = _.reject(s.issues, issue);
       });
+      this.replaceEventBus.push(true);
     }
 
     onCursorOverIssue = (issueId:string) => {

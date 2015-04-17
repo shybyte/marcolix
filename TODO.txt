@@ -2,7 +2,7 @@ Doing:
 
 
 TODO:
-    * Clever check as you type (wait for user to pause typing)
+    * Fix nock -> knock and tim -> time bug
     * Prevent to flag around cursor when typing a new word
     * Improve splitIntoSentences
     * Optimize Card Rendering / Expanded card
@@ -56,6 +56,7 @@ Done:
        * Send und use Diff [1:00]
     * Check as you type (partial check result) [5:00]
     * Test and debug Check as you type [0:50]
+    * Clever check as you type (wait for user to pause typing) [3:00]
 
 Learned:
     * Test Performance (of libraries) early
