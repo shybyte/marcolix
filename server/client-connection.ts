@@ -30,9 +30,11 @@ export function createClientConnection(socket:SocketIO.Socket) {
       var localCheckReport = checking.createLocalCheckReport(checkCommand.diff, lastCheckReport, checkReport);
       console.log('localCheckReport: ',localCheckReport);
       var oldRemainingIssues = _.reject(lastCheckReport.issues, issue => _.contains(localCheckReport.removedIssueIDs, issue.id));
+      var displacedOldRemainingIssues = sharedUtils.displaceIssues(oldRemainingIssues, checkCommand.diff);
       lastCheckReport = {
-        issues: _.sortBy(oldRemainingIssues.concat(localCheckReport.newIssues), (issue:Issue) => issue.range[0])
+        issues: _.sortBy(displacedOldRemainingIssues.concat(localCheckReport.newIssues), (issue:Issue) => issue.range[0])
       };
+      console.log('issues: ',lastCheckReport.issues);
       callback(localCheckReport);
     });
   });

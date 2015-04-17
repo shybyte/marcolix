@@ -2,7 +2,6 @@ Doing:
 
 
 TODO:
-    * Test and debug Check as you type
     * Clever check as you type (wait for user to pause typing)
     * Prevent to flag around cursor when typing a new word
     * Improve splitIntoSentences
@@ -56,6 +55,7 @@ Done:
        * Switch to WebSockets for checking [1:00]
        * Send und use Diff [1:00]
     * Check as you type (partial check result) [4:00]
+    * Test and debug Check as you type [0:50]
 
 Learned:
     * Test Performance (of libraries) early
