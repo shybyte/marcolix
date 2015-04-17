@@ -127,9 +127,9 @@ describe('createLocalCheckReport', function () {
 
   it('allow rangeExtension to handle cases like nock -> knock or tim -> time', function () {
     var simpleDiff:SimpleDiff = {
-      deletionRange: [20, 30],
-      insertionLength: 10,
-      insertion: 'ErrorNew  '
+      deletionRange: [20, 28],
+      insertionLength: 8,
+      insertion: 'ErrorNew'
     }
     var oldIssueBefore = simpleIssue('Error1', [10, 16]);
     var oldIssue = simpleIssue('ErrorOld', [20, 28]);
@@ -148,9 +148,9 @@ describe('createLocalCheckReport', function () {
     assert.deepEqual(localCheckReport.newIssues, [newIssueBefore, newIssue, newIssueAfter]);
     assert.deepEqual(localCheckReport.removedIssueIDs, [oldIssueBefore.id, oldIssue.id, oldIssueAfter.id]);
 
-    var localCheckReportExtension3 = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 2);
-    assert.deepEqual(localCheckReportExtension3.newIssues, [newIssue, newIssueAfter]);
-    assert.deepEqual(localCheckReportExtension3.removedIssueIDs, [oldIssue.id, oldIssueAfter.id]);
+    var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 3);
+    assert.deepEqual(localCheckReport.newIssues, [newIssue, newIssueAfter]);
+    assert.deepEqual(localCheckReport.removedIssueIDs, [oldIssue.id, oldIssueAfter.id]);
 
     var localCheckReportExtension2 = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 1);
     assert.deepEqual(localCheckReportExtension2.newIssues, [newIssue]);
