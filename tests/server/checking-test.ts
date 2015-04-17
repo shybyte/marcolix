@@ -98,7 +98,7 @@ describe('createLocalCheckReport', function () {
       issues: [simpleIssue('Error1', [10, 16]), newIssue, simpleIssue('Error2', [30, 36])]
     }
 
-    var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport);
+    var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 0);
 
     assert.deepEqual(localCheckReport.newIssues, [newIssue]);
     assert.deepEqual(localCheckReport.removedIssueIDs, []);
@@ -119,10 +119,43 @@ describe('createLocalCheckReport', function () {
       issues: [simpleIssue('Error1', [10, 16]), newIssue, simpleIssue('Error3', [30, 36])]
     }
 
-    var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport);
+    var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 0);
 
     assert.deepEqual(localCheckReport.newIssues, [newIssue]);
     assert.deepEqual(localCheckReport.removedIssueIDs, [oldIssue.id]);
+  });
+
+  it('allow rangeExtension to handle cases like nock -> knock or tim -> time', function () {
+    var simpleDiff:SimpleDiff = {
+      deletionRange: [20, 30],
+      insertionLength: 10,
+      insertion: 'ErrorNew  '
+    }
+    var oldIssueBefore = simpleIssue('Error1', [10, 16]);
+    var oldIssue = simpleIssue('ErrorOld', [20, 28]);
+    var oldIssueAfter = simpleIssue('Error3', [30, 26]);
+    var lastCheckReport:CheckReport = {
+      issues: [oldIssueBefore, oldIssue, oldIssueAfter]
+    }
+    var newIssueBefore = simpleIssue('Error1', [10, 16]);
+    var newIssue = simpleIssue('ErrorNew', [20, 28]);
+    var newIssueAfter = simpleIssue('Error3', [30, 36]);
+    var currentCheckReport:CheckReport = {
+      issues: [newIssueBefore, newIssue, newIssueAfter]
+    }
+
+    var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 10);
+    assert.deepEqual(localCheckReport.newIssues, [newIssueBefore, newIssue, newIssueAfter]);
+    assert.deepEqual(localCheckReport.removedIssueIDs, [oldIssueBefore.id, oldIssue.id, oldIssueAfter.id]);
+
+    var localCheckReportExtension3 = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 2);
+    assert.deepEqual(localCheckReportExtension3.newIssues, [newIssue, newIssueAfter]);
+    assert.deepEqual(localCheckReportExtension3.removedIssueIDs, [oldIssue.id, oldIssueAfter.id]);
+
+    var localCheckReportExtension2 = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 1);
+    assert.deepEqual(localCheckReportExtension2.newIssues, [newIssue]);
+    assert.deepEqual(localCheckReportExtension2.removedIssueIDs, [oldIssue.id]);
+
   });
 
 });

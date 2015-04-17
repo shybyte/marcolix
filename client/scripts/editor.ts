@@ -91,9 +91,9 @@ module marcolix {
         'to make shore that mother. ';
       //editableDiv.textContent = _.repeat(_.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 40) + _.repeat(textWithIssues, 2), 2); //500->120
       //editableDiv.textContent = _.repeat(longDummyText, 0) + _.repeat(issueFreeDummyText, 0) + _.repeat(textWithIssues, 2);
-      editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
+      //editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
       //editableDiv.textContent = _.repeat('When they are young you have to wate 3 days.', 1);
-      //editableDiv.textContent = textWithIssues;
+      editableDiv.textContent = textWithIssues;
       //editableDiv.innerHTML = 'Test<div>Testt</div> ';
       //editableDiv.innerHTML = _.repeat('This is a good text.<br>I likee it.<br/>But it hass errorrs.', 1);
       //editableDiv.innerHTML = _.repeat('This is a good text.<div><br></div><div><br></div>I likee it.<br/>But it hass errorrs.', 1);

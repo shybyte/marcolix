@@ -178,11 +178,12 @@ export function checkRoute(req, res) {
   });
 }
 
-export function createLocalCheckReport(diff:SimpleDiff, lastCheckReport:CheckReport, currentCheckReport:CheckReport):marcolix.LocalCheckReport {
-  var insertionRange = [diff.deletionRange[0], diff.deletionRange[0] + diff.insertionLength];
-  var removedIssues = lastCheckReport.issues.filter(issue => sharedUtils.isRangeOverlapping(issue.range, diff.deletionRange));
+export function createLocalCheckReport(diff:SimpleDiff, lastCheckReport:CheckReport, currentCheckReport:CheckReport, rangeExtension: number):marcolix.LocalCheckReport {
+  var extendedDeletionRange = [diff.deletionRange[0] - rangeExtension, diff.deletionRange[1] + rangeExtension];
+  var extendedInsertionRange = [diff.deletionRange[0]- rangeExtension, diff.deletionRange[0] + diff.insertionLength + rangeExtension];
+  var removedIssues = lastCheckReport.issues.filter(issue => sharedUtils.isRangeOverlapping(issue.range, extendedDeletionRange));
   return {
-    newIssues: currentCheckReport.issues.filter(issue => sharedUtils.isRangeOverlapping(issue.range, insertionRange)),
+    newIssues: currentCheckReport.issues.filter(issue => sharedUtils.isRangeOverlapping(issue.range, extendedInsertionRange)),
     removedIssueIDs: removedIssues.map(issue => issue.id)
   }
 }

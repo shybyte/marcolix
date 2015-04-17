@@ -27,7 +27,7 @@ export function createClientConnection(socket:SocketIO.Socket) {
     currentText = utils.applyDiff(currentText, checkCommand.diff);
     console.log('Checking local:', currentText);
     checking.checkGlobal({text: currentText, language: currentLanguage}).done(checkReport => {
-      var localCheckReport = checking.createLocalCheckReport(checkCommand.diff, lastCheckReport, checkReport);
+      var localCheckReport = checking.createLocalCheckReport(checkCommand.diff, lastCheckReport, checkReport, 10);
       console.log('localCheckReport: ',localCheckReport);
       var oldRemainingIssues = _.reject(lastCheckReport.issues, issue => _.contains(localCheckReport.removedIssueIDs, issue.id));
       var displacedOldRemainingIssues = sharedUtils.displaceIssues(oldRemainingIssues, checkCommand.diff);
