@@ -54,7 +54,7 @@ Done:
     * Check as you type (partial text request)
        * Switch to WebSockets for checking [1:00]
        * Send und use Diff [1:00]
-    * Check as you type (partial check result) [4:00]
+    * Check as you type (partial check result) [5:00]
     * Test and debug Check as you type [0:50]
 
 Learned:
