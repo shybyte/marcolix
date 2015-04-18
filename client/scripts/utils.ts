@@ -2,6 +2,7 @@ module marcolix.utils {
   export function set<T>(object:T, f:(T) => void):T {
     var clone = _.clone(object);
     f(clone);
+    Object.freeze(clone);
     return clone;
   }
 
