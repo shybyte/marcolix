@@ -1,6 +1,7 @@
 /// <reference path="service-facade" />
 
 module marcolix {
+  import DomPosition = utils.DomPosition;
   var div = React.createFactory('div');
   rangy.init();
 
@@ -36,6 +37,16 @@ module marcolix {
     selectRange(createRange(nodes));
   }
 
+  function getEndPos(issue:Issue, domPositions: DomPosition[])  {
+    if (issue.range[1] < domPositions.length) {
+      return domPositions[issue.range[1]];
+    } else {
+      return utils.set(_.last(domPositions), (domPos : DomPosition) => {
+        domPos.offset = domPos.offset + 1;
+      });
+    }
+  }
+
   function addMarkings(editableDiv, issues:Issue[]) {
     var textMapping = utils.extractTextMapping(editableDiv);
     console.log('textMapping: ', textMapping);
@@ -47,7 +58,7 @@ module marcolix {
         textMapping = utils.extractTextMapping(editableDiv);
       }
       var startPos = textMapping.domPositions[issue.range[0]];
-      var endPos = textMapping.domPositions[issue.range[1]];
+      var endPos = getEndPos(issue,textMapping.domPositions);
       if (startPos && endPos) {
         rangyRange.setStart(startPos.node, startPos.offset);
         rangyRange.setEnd(endPos.node, endPos.offset);
@@ -65,7 +76,7 @@ module marcolix {
   }
 
   export class EditorComponent extends React.Component<EditorProps,any> {
-    changeEventStream: Bacon.EventStream<any>
+    changeEventStream:Bacon.EventStream<any>
     state = {
       isRefreshOfMarkingsNeeded: true
     }

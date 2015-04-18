@@ -1,22 +1,23 @@
 Doing:
 
-
-
 TODO:
+    * Hide Check Button (Should be easy to enable for debugging)
+    * Prevent concurrent checks (on client) (Done already?)
+    * Fix white space error at end problem.
+    * Optimize Card Rendering / Expanded card
+    * Improve Styling
+        * Style Scroll-Bars
+    * Enable other languages
     * Prevent to flag around cursor when typing a new word
     * Improve splitIntoSentences
-    * Optimize Card Rendering / Expanded card
     * Fine tuning of Check as you type
     * Show Flesch Reading Ease
     * Fixed wrong WHITESPACE_RULE (repeated whitespace) at end of text
     * Fix missing white space issues on sentence borders, caused by sentence segmentation
     * Show Number of words and check speed
-    * Style Scroll-Bars
     * SmoothScroll (editor)
     * SmoothScroll (sidebar)
-    * Prevent concurrent checks (on client)
-    * Handle nested divs somehow (text extraction / markings, flatten?)
-    * Fix mapping problem at end of text
+    * Handle nested divs somehow (text extraction / markings, flatten?) (Needed anymore?)
     * Clean up memory after connection end
     * Handle lost socket connection (e.g. currentText is null in check local)
 
@@ -58,6 +59,7 @@ Done:
     * Test and debug Check as you type [0:50]
     * Clever check as you type (wait for user to pause typing) [3:00]
     * Fix nock -> knock and tim -> time bug [0:30]
+    * Fix mapping problem at end of text[0:15]
 
 Learned:
     * Test Performance (of libraries) early
