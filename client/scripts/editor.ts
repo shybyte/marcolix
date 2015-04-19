@@ -1,6 +1,8 @@
 /// <reference path="service-facade" />
 
 module marcolix {
+  'use strict';
+
   import DomPosition = utils.DomPosition;
   var div = React.createFactory('div');
   rangy.init();
