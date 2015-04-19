@@ -10,6 +10,8 @@ module marcolix {
   var div = React.createFactory('div');
   var button = React.createFactory('button');
 
+  var ENABLE_MANUAL_CHECKING = false;
+
   interface AppState {
     checkReport: LocalCheckReport
     issues: Issue[]
@@ -32,7 +34,11 @@ module marcolix {
 
 
     componentDidMount() {
+      if (ENABLE_MANUAL_CHECKING) {
+          return;
+      }
       this.check();
+      // ennable check as you type
       this.getEditor().changeEventStream.debounce(500).merge(this.replaceEventBus).merge(this.changePoll)
         .holdWhen(this.isChecking).throttle(100).onValue(() => {
           this.check();
@@ -110,7 +116,8 @@ module marcolix {
 
     render() {
       return div({},
-        button({className: 'checkButton', onClick: () => this.check(true)}, 'Check'),
+        ENABLE_MANUAL_CHECKING ?
+          button({className: 'checkButton', onClick: () => this.check(true)}, 'Check') : null,
         div({},
           div({className: 'editorCol'}, Editor({
             checkReport: this.state.checkReport,

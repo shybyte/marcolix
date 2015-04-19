@@ -1,9 +1,7 @@
 Doing:
-    * Hide Check Button (Should be easy to enable for debugging)
-
 
 TODO:
-    * Prevent concurrent checks (on client) (Done already?)
+
     * Optimize Card Rendering / Expanded card
     * Improve Styling
         * Style Scroll-Bars
@@ -61,6 +59,8 @@ Done:
     * Fix nock -> knock and tim -> time bug [0:30]
     * Fix mapping problem at end of text [0:15]
     * Fix white space error at end problem [0:30].
+    * Prevent concurrent checks (on client) (Done already!)
+    * Hide Check Button (Should be easy to enable for debugging) [0:15]
 
 Learned:
     * Test Performance (of libraries) early
