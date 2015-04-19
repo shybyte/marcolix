@@ -1,3 +1,5 @@
+'use strict';
+
 import _ = require('lodash');
 
 export function splitIntoSentences(text:string) {

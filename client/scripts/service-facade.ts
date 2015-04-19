@@ -1,4 +1,6 @@
 module marcolix.service {
+  'use strict';
+
   var socket = io();
 
   export function check(documentContent:string, options?:Object):Promise<LocalCheckReport> {
@@ -12,12 +14,6 @@ module marcolix.service {
         resolve(checkReport);
       });
     });
-
-    //return reqwest({
-    //  url: 'check',
-    //  method: 'POST',
-    //  data: checkCommandArguments
-    //});
   }
 
 

@@ -1,3 +1,5 @@
+'use strict';
+
 import _ = require('lodash');
 import Issue = marcolix.Issue;
 

@@ -1,8 +1,8 @@
 Doing:
+    * Hide Check Button (Should be easy to enable for debugging)
 
 
 TODO:
-    * Hide Check Button (Should be easy to enable for debugging)
     * Prevent concurrent checks (on client) (Done already?)
     * Optimize Card Rendering / Expanded card
     * Improve Styling

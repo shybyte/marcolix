@@ -1,3 +1,5 @@
+'use strict';
+
 import assert = require("assert");
 import nlp = require("../../server/nlp");
 

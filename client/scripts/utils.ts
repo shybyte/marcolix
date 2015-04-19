@@ -1,4 +1,6 @@
 module marcolix.utils {
+  'use strict';
+
   export function set<T>(object:T, f:(T) => void):T {
     var clone = _.clone(object);
     f(clone);

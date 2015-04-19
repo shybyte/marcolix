@@ -1,3 +1,5 @@
+'use strict';
+
 import assert = require("assert");
 import _ = require("lodash");
 import checking = require("../../server/checking");

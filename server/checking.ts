@@ -1,7 +1,10 @@
+'use strict';
+
 import Promise = require('bluebird');
 import requestModule = require('request');
 import parseXmlModule = require('xml2js');
 import _ = require('lodash');
+
 
 import utils = require('./utils');
 var set = utils.set;

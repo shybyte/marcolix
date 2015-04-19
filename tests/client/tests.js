@@ -1,4 +1,6 @@
 (function () {
+  'use strict';
+
   var test = QUnit.test;
 
   var testDiv = document.getElementById('testDiv');

@@ -1,3 +1,5 @@
+'use strict';
+
 import path = require('path');
 import http = require('http');
 import express = require('express');

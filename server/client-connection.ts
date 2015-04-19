@@ -1,3 +1,5 @@
+'use strict';
+
 import checking = require('./checking');
 import utils = require('./utils');
 var sharedUtils = require('../shared/shared-utils');

@@ -4,6 +4,8 @@
 /// <reference path="utils" />
 
 module marcolix {
+  'use strict';
+
   var utils = marcolix.utils;
   var div = React.createFactory('div');
   var button = React.createFactory('button');

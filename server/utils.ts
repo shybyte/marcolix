@@ -1,3 +1,5 @@
+'use strict';
+
 import _ = require('lodash');
 
 export function set<T>(object:T, f:(T) => void):T {

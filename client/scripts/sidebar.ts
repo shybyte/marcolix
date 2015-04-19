@@ -1,4 +1,6 @@
 module marcolix {
+  'use strict';
+
   var div = React.createFactory('div');
   var span = React.createFactory('span');
   var button = React.createFactory('button');
