@@ -1,9 +1,9 @@
 Doing:
 
+
 TODO:
     * Hide Check Button (Should be easy to enable for debugging)
     * Prevent concurrent checks (on client) (Done already?)
-    * Fix white space error at end problem.
     * Optimize Card Rendering / Expanded card
     * Improve Styling
         * Style Scroll-Bars
@@ -59,7 +59,8 @@ Done:
     * Test and debug Check as you type [0:50]
     * Clever check as you type (wait for user to pause typing) [3:00]
     * Fix nock -> knock and tim -> time bug [0:30]
-    * Fix mapping problem at end of text[0:15]
+    * Fix mapping problem at end of text [0:15]
+    * Fix white space error at end problem [0:30].
 
 Learned:
     * Test Performance (of libraries) early

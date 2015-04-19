@@ -1,11 +1,13 @@
 import _ = require('lodash');
 
 export function splitIntoSentences(text:string) {
-  var splitted : string[] = text.split('.');
-  if(_.last(splitted).trim() === '') {
-    splitted.pop();
+  var sentenceRegExp = /[\s\S]*?(\.|$)/g;
+  var sentences : string[] = [];
+  var sentence : string;
+  while ((sentence = sentenceRegExp.exec(text)[0])) {
+    sentences.push(sentence);
   }
-  return splitted.map(s => s + '.');
+  return sentences;
 }
 
 export function splitIntoSentencesOrginal(text) {
