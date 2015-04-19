@@ -70,7 +70,7 @@ module marcolix {
 
     isReplacementPopupOpen = () => (this.state.isMouseOverReplacementInTitle || this.state.isMouseOverReplacementPopup)
 
-    onClickReplacement = (event: Event, replacementIndex:number) => {
+    onClickReplacement = (event:Event, replacementIndex:number) => {
       event.stopPropagation();
       this.props.onClickReplacement(this.props.issue, replacementIndex);
     }
@@ -107,7 +107,7 @@ module marcolix {
                   ref: 'replacementInTitle',
                   onMouseOver: this.onMouseOverReplacementInTitle,
                   onMouseOut: this.onMouseOutReplacementInTitle,
-                  onClick: (ev) => onClickReplacement(ev,0)
+                  onClick: (ev) => onClickReplacement(ev, 0)
                 },
                 makeSuffixPrefixWhiteSpaceVisible(issue.replacements[0]))
             ) : null),
@@ -154,14 +154,13 @@ module marcolix {
   }
 
   export class SidebarComponent extends React.Component<SidebarProps,any> {
-    state = {
-    }
+    state = {}
 
     onClickIssue = (issue:Issue) => {
       this.props.onClickIssue(issue);
     }
 
-    componentDidUpdate () {
+    componentDidUpdate() {
       var selectedIssue = this.props.selectedIssue;
       if (selectedIssue) {
         // refactor, similar to editor.ts
@@ -173,8 +172,8 @@ module marcolix {
         var issueTop = issueEl.offsetTop;
         var scrollTop = sidebarEl.scrollTop;
         var sidebarHeight = sidebarEl.offsetHeight;
-        if ((issueTop < sidebarEl.scrollTop) || (issueTop > scrollTop + sidebarHeight))  {
-          sidebarEl.scrollTop = issueTop -  Math.floor(sidebarHeight*3/4);
+        if ((issueTop < sidebarEl.scrollTop) || (issueTop > scrollTop + sidebarHeight)) {
+          sidebarEl.scrollTop = issueTop - Math.floor(sidebarHeight * 3 / 4);
         }
       }
     }
