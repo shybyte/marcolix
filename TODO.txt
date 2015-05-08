@@ -1,10 +1,8 @@
 Doing:
 
-TODO:
 
+TODO:
     * Optimize Card Rendering / Expanded card
-    * Improve Styling
-        * Style Scroll-Bars
     * Enable other languages
     * Prevent to flag around cursor when typing a new word
     * Improve splitIntoSentences
@@ -61,6 +59,8 @@ Done:
     * Fix white space error at end problem [0:30].
     * Prevent concurrent checks (on client) (Done already!)
     * Hide Check Button (Should be easy to enable for debugging) [0:15]
+    * Improve Styling [0:50]
+        * Style Scroll-Bars
 
 Learned:
     * Test Performance (of libraries) early

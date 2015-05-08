@@ -16,7 +16,7 @@ function pathInsideProjectRoot(pathFromProjectRoot) {
 }
 
 var app = express();
-var port = 3000;
+var port = 3333;
 app.set('port', port);
 
 app.use(compression());

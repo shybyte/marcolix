@@ -35,7 +35,7 @@ module marcolix {
 
     componentDidMount() {
       if (ENABLE_MANUAL_CHECKING) {
-          return;
+        return;
       }
       this.check();
       // ennable check as you type
@@ -115,25 +115,25 @@ module marcolix {
     }
 
     render() {
-      return div({},
+      return div({className: 'marcolix'},
         ENABLE_MANUAL_CHECKING ?
           button({className: 'checkButton', onClick: () => this.check(true)}, 'Check') : null,
-        div({},
-          div({className: 'editorCol'}, Editor({
+        div({className: 'editorSidebarRow'},
+          Editor({
             checkReport: this.state.checkReport,
             issues: this.state.issues,
             selectedIssue: this.state.selectedIssue,
             onCursorOverIssue: this.onCursorOverIssue,
             ref: 'editor'
-          })),
-          div({className: 'sidebarCol'}, Sidebar({
+          }),
+          Sidebar({
             checkReport: this.state.checkReport,
             issues: this.state.issues,
             selectedIssue: this.state.selectedIssue || this.state.issueUnderCursor,
             onClickIssue: this.onClickIssue,
             onClickReplacement: this.onClickReplacement,
             ref: 'sidebar'
-          }))
+          })
         )
       );
     }
