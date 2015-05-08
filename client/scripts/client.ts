@@ -1,4 +1,5 @@
 /// <reference path="../../shared/shared-utils" />
+/// <reference path="document-service-facade.ts" />
 /// <reference path="editor" />
 /// <reference path="sidebar" />
 /// <reference path="utils" />
@@ -19,7 +20,11 @@ module marcolix {
     issueUnderCursor: Issue
   }
 
-  export class MainComponent extends React.Component<any,AppState> {
+  interface MainComponentProps {
+    config: service.document.Config
+  }
+
+  export class MainComponent extends React.Component<MainComponentProps,AppState> {
     isChecking = new Bacon.Bus()
     replaceEventBus = new Bacon.Bus()
     changePoll = Bacon.interval(10 * 1000, true)
@@ -114,12 +119,17 @@ module marcolix {
       });
     }
 
+    getDocumentService() {
+      return service.document.createServiceFacade(this.props.config);
+    }
+
     render() {
       return div({className: 'marcolix'},
         ENABLE_MANUAL_CHECKING ?
           button({className: 'checkButton', onClick: () => this.check(true)}, 'Check') : null,
         div({className: 'editorSidebarRow'},
           Editor({
+            documentServiceFacade: this.getDocumentService(),
             checkReport: this.state.checkReport,
             issues: this.state.issues,
             selectedIssue: this.state.selectedIssue,
@@ -139,8 +149,21 @@ module marcolix {
     }
   }
 
+
+  function main() {
+    var config = {
+      documentUrl: 'http://localhost:3000/api/documents/jJYTK3HbSgoSXGtD7',
+      credentials: {
+        userId: 'RdpHDmvx5yjCgN2bM',
+        authToken: 'E-PcNnQyHXu4lmdwCbng5YShOvPiNuhX7jQQaimeiGi'
+      }
+    };
+
+    React.render(React.createElement(MainComponent, {config: config}), document.getElementById('app'));
+  }
+
   if (!window['isTestRunning']) {
-    React.render(React.createElement(MainComponent), document.getElementById('app'))
+    main();
   }
 
 }

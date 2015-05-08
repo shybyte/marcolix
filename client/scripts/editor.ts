@@ -4,6 +4,8 @@ module marcolix {
   'use strict';
 
   import DomPosition = utils.DomPosition;
+  import MarcolixHtmlDocument = marcolix.service.document.MarcolixHtmlDocument;
+
   var div = React.createFactory('div');
   rangy.init();
 
@@ -72,6 +74,7 @@ module marcolix {
   }
 
   interface EditorProps {
+    documentServiceFacade: marcolix.service.document.DocumentServiceFacade
     checkReport: LocalCheckReport
     selectedIssue: Issue
     onCursorOverIssue: (issueId:string) => void
@@ -104,7 +107,7 @@ module marcolix {
         'to make shore that mother. ';
       //editableDiv.textContent = _.repeat(_.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 40) + _.repeat(textWithIssues, 2), 2); //500->120
       //editableDiv.textContent = _.repeat(longDummyText, 0) + _.repeat(issueFreeDummyText, 0) + _.repeat(textWithIssues, 2);
-      editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
+      //editableDiv.textContent = _.repeat('This is a goodd text. I likee it. But it hass errorrs.', 1);
       //editableDiv.textContent = _.repeat('When they are young you have to wate 3 days.', 1);
       //editableDiv.textContent = textWithIssues;
       //editableDiv.innerHTML = 'Test<div>Testt</div> ';
@@ -113,12 +116,18 @@ module marcolix {
       //editableDiv.innerHTML = _.repeat('Test.<div><span>Testt</span><br><div><br></div>I likee it.</div>', 1);
       //editableDiv.textContent = 'This is an test. This is an test. This is an test. This is an test.';
 
+      var documentLoadedEventStream = new Bacon.Bus();
+      this.props.documentServiceFacade.getDocument().then(function (document: MarcolixHtmlDocument) {
+        editableDiv.innerHTML = document.html;
+        documentLoadedEventStream.push({});
+      });
+
       var thisDomNode = React.findDOMNode(this);
       var input = Bacon.fromEvent(thisDomNode, 'input');
       var cut = Bacon.fromEvent(thisDomNode, 'cut');
       var paste = Bacon.fromEvent(thisDomNode, 'paste');
       var keyPressed = Bacon.fromEvent(thisDomNode, 'keypress');
-      this.changeEventStream = Bacon.mergeAll([input, cut, paste, keyPressed]);
+      this.changeEventStream = Bacon.mergeAll([input, cut, paste, keyPressed, documentLoadedEventStream]);
     }
 
     checkForCursorChange = () => {
