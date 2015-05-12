@@ -6,7 +6,8 @@ module marcolix {
   import DomPosition = utils.DomPosition;
   import MarcolixHtmlDocument = marcolix.service.document.MarcolixHtmlDocument;
 
-  var div = React.createFactory('div');
+  var div = React.DOM.div;
+  var input = React.DOM.input;
   rangy.init();
 
   function addMarkingToRangyRange(rangyRange, className, id) {
@@ -41,11 +42,11 @@ module marcolix {
     selectRange(createRange(nodes));
   }
 
-  function getEndPos(issue:Issue, domPositions: DomPosition[])  {
+  function getEndPos(issue:Issue, domPositions:DomPosition[]) {
     if (issue.range[1] < domPositions.length) {
       return domPositions[issue.range[1]];
     } else {
-      return utils.set(_.last(domPositions), (domPos : DomPosition) => {
+      return utils.set(_.last(domPositions), (domPos:DomPosition) => {
         domPos.offset = domPos.offset + 1;
       });
     }
@@ -62,7 +63,7 @@ module marcolix {
         textMapping = utils.extractTextMapping(editableDiv);
       }
       var startPos = textMapping.domPositions[issue.range[0]];
-      var endPos = getEndPos(issue,textMapping.domPositions);
+      var endPos = getEndPos(issue, textMapping.domPositions);
       if (startPos && endPos) {
         rangyRange.setStart(startPos.node, startPos.offset);
         rangyRange.setEnd(endPos.node, endPos.offset);
@@ -81,9 +82,20 @@ module marcolix {
   }
 
   export class EditorComponent extends React.Component<EditorProps,any> {
-    changeEventStream:Bacon.EventStream<any>
+    isSaving = new Bacon.Bus()
+    titleChangedEventStream = new Bacon.Bus()
+    changePoll = Bacon.interval(10 * 1000, true)
+    bodyChangeEventStream:Bacon.EventStream<any>
+
+    lastSavedDocument: MarcolixHtmlDocument = {
+      title: '',
+      html: ''
+    }
+    lastSavedHtmlBeforeCleaning: string = ''
+
     state = {
-      isRefreshOfMarkingsNeeded: true
+      isRefreshOfMarkingsNeeded: true,
+      title: ''
     }
 
     getEditableDiv() {
@@ -117,18 +129,50 @@ module marcolix {
       //editableDiv.textContent = 'This is an test. This is an test. This is an test. This is an test.';
 
       var documentLoadedEventStream = new Bacon.Bus();
-      this.props.documentServiceFacade.getDocument().then(function (document: MarcolixHtmlDocument) {
+      this.props.documentServiceFacade.getDocument().then((document:MarcolixHtmlDocument) => {
+        this.lastSavedDocument = document;
         editableDiv.innerHTML = document.html;
         documentLoadedEventStream.push({});
+        this.setState({title: document.title});
       });
 
-      var thisDomNode = React.findDOMNode(this);
-      var input = Bacon.fromEvent(thisDomNode, 'input');
-      var cut = Bacon.fromEvent(thisDomNode, 'cut');
-      var paste = Bacon.fromEvent(thisDomNode, 'paste');
-      var keyPressed = Bacon.fromEvent(thisDomNode, 'keypress');
-      this.changeEventStream = Bacon.mergeAll([input, cut, paste, keyPressed, documentLoadedEventStream]);
+      var editableDivDomNode = React.findDOMNode(this.refs['editableDiv']);
+      var input = Bacon.fromEvent(editableDivDomNode, 'input');
+      var cut = Bacon.fromEvent(editableDivDomNode, 'cut');
+      var paste = Bacon.fromEvent(editableDivDomNode, 'paste');
+      var keyPressed = Bacon.fromEvent(editableDivDomNode, 'keypress');
+      this.bodyChangeEventStream = Bacon.mergeAll([input, cut, paste, keyPressed, documentLoadedEventStream]);
+      this.bodyChangeEventStream.merge(this.titleChangedEventStream).debounce(500).merge(this.changePoll)
+        .holdWhen(this.isSaving).throttle(100).onValue(this.onAnyPossibleChange);
     }
+
+    onAnyPossibleChange = () => {
+      if (this.getEditableDiv().innerHTML !== this.lastSavedHtmlBeforeCleaning
+      || this.state.title !== this.lastSavedDocument.title) {
+        this.save();
+      }
+    }
+
+    save = () => {
+      var htmlBeforeCleaning = this.getEditableDiv().innerHTML;
+      var newDocument = {
+        title: this.state.title,
+        html: utils.removeAllMarkingsFromHtmlString(htmlBeforeCleaning)
+      };
+      if (newDocument.html == this.lastSavedDocument.html && newDocument.title == this.lastSavedDocument.title) {
+        return;
+      }
+      this.isSaving.push(true);
+      this.props.documentServiceFacade.saveDocument(newDocument).then(() => {
+        this.lastSavedDocument = newDocument;
+        this.lastSavedHtmlBeforeCleaning = htmlBeforeCleaning;
+        this.isSaving.push(false);
+      }, (error) => {
+        this.isSaving.push(false);
+        console.error('Error while saving', error);
+      });
+    }
+
 
     checkForCursorChange = () => {
       var sel = rangy.getSelection();
@@ -198,12 +242,20 @@ module marcolix {
       }
     }
 
+    onChangeTitle = (evt) => {
+      this.titleChangedEventStream.push({});
+      this.setState({title: evt.target.value});
+    }
 
     render() {
-      return div({
-        className: 'editor', contentEditable: true, ref: 'editableDiv', spellCheck: false,
-        onKeyDown: this.checkForCursorChange, onKeyUp: this.checkForCursorChange, onClick: this.checkForCursorChange
-      });
+      return div({className: 'editor'},
+        input({className: 'editorTitle', placeholder: 'Type your title', value: this.state.title, onChange: this.onChangeTitle}),
+        div({
+          className: 'editorBody',
+          contentEditable: true, ref: 'editableDiv', spellCheck: false,
+          onKeyDown: this.checkForCursorChange, onKeyUp: this.checkForCursorChange, onClick: this.checkForCursorChange
+        })
+      );
     }
 
   }

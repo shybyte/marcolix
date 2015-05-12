@@ -8,7 +8,7 @@ module marcolix.utils {
     return clone;
   }
 
-  export function removeMarkings(node:HTMLElement, markingIDs: string[]) {
+  export function removeMarkings(node:HTMLElement, markingIDs:string[]) {
     var markings = node.querySelectorAll('span[itemId]');
     var shouldMarkingGetRemoved = marking => _.contains(markingIDs, marking.attributes['itemId'].value);
     var markingsToRemove = _.filter(markings, shouldMarkingGetRemoved);
@@ -34,6 +34,14 @@ module marcolix.utils {
       parent.removeChild(marking);
     });
   }
+
+  export function removeAllMarkingsFromHtmlString(html:string) {
+    var element:HTMLDivElement = document.createElement('div');
+    element.innerHTML = html;
+    removeAllMarkings(element);
+    return element.innerHTML;
+  }
+
 
   function lengthOfCommonBeginning(s1:string, s2:string):number {
     var indexOfFirstDifference = _.findIndex(s1, (char1, i) => char1 !== s2[i]);

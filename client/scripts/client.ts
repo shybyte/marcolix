@@ -44,7 +44,7 @@ module marcolix {
       }
       this.check();
       // ennable check as you type
-      this.getEditor().changeEventStream.debounce(500).merge(this.replaceEventBus).merge(this.changePoll)
+      this.getEditor().bodyChangeEventStream.debounce(500).merge(this.replaceEventBus).merge(this.changePoll)
         .holdWhen(this.isChecking).throttle(100).onValue(() => {
           this.check();
         });

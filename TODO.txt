@@ -1,9 +1,7 @@
 Doing:
     * Integrate with Marcolixa (API)
         - Read Html [1:30]
-        * Save Html
-        * Show Title
-        * Edit Title
+        - Show Title, Edit Title, Save BodyHtml and Title [1:30]
         * Check authToken on server
 
 
