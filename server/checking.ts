@@ -21,6 +21,7 @@ import Issue = marcolix.Issue;
 import CheckReport = marcolix.CheckReport;
 import SimpleDiff = marcolix.SimpleDiff;
 
+var VALIDATE_TOKEN_URL = 'http://localhost:3000/api/token/validate';
 
 var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081'];
 //var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081', 'http://localhost:8082'];
@@ -147,6 +148,29 @@ function cacheIssues(language:string, sentences:Sentence[], newIssues:IssueWithi
 }
 
 export function checkGlobal(checkRequest:marcolix.CheckCommandArguments):Promise<marcolix.CheckReport> {
+  return request({
+    url: VALIDATE_TOKEN_URL,
+    headers: {
+      'x-user-id': checkRequest.userId,
+      'x-auth-token': checkRequest.authToken,
+    }
+  }).then(function (result):any {
+    if (result[0].statusCode !== 200) {
+      console.error('Not authenticated.');
+      return {
+        issues: []
+      }
+    }
+    return checkGlobalUnSecured(checkRequest);
+  }, function (error) {
+    console.error('Error while trying to authenticate: ', error);
+    return {
+      issues: []
+    }
+  });
+}
+
+export function checkGlobalUnSecured(checkRequest:marcolix.CheckCommandArguments):Promise<marcolix.CheckReport> {
   var startTime = Date.now();
   var language = checkRequest.language;
   var text = checkRequest.text;
@@ -169,21 +193,23 @@ export function checkGlobal(checkRequest:marcolix.CheckCommandArguments):Promise
     console.log('Time', Date.now() - startTime);
     return {issues: allIssuesCleaned};
   });
+}
 
-};
 
 export function checkRoute(req, res) {
   checkGlobal({
     text: req.query.text || req.body.text,
-    language: req.query.language || req.body.language
+    language: req.query.language || req.body.language,
+    userId: req.headers['x-user-id'],
+    authToken: req.headers['x-auth-token']
   }).done(checkReport => {
     res.json(checkReport);
   });
 }
 
-export function createLocalCheckReport(diff:SimpleDiff, lastCheckReport:CheckReport, currentCheckReport:CheckReport, rangeExtension: number):marcolix.LocalCheckReport {
+export function createLocalCheckReport(diff:SimpleDiff, lastCheckReport:CheckReport, currentCheckReport:CheckReport, rangeExtension:number):marcolix.LocalCheckReport {
   var extendedDeletionRange = [diff.deletionRange[0] - rangeExtension, diff.deletionRange[1] + rangeExtension];
-  var extendedInsertionRange = [diff.deletionRange[0]- rangeExtension, diff.deletionRange[0] + diff.insertionLength + rangeExtension];
+  var extendedInsertionRange = [diff.deletionRange[0] - rangeExtension, diff.deletionRange[0] + diff.insertionLength + rangeExtension];
   var removedIssues = lastCheckReport.issues.filter(issue => sharedUtils.isRangeOverlapping(issue.range, extendedDeletionRange));
   return {
     newIssues: currentCheckReport.issues.filter(issue => sharedUtils.isRangeOverlapping(issue.range, extendedInsertionRange)),

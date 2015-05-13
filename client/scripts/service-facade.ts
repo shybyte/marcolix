@@ -3,10 +3,17 @@ module marcolix.service {
 
   var socket = io();
 
-  export function check(documentContent:string, options?:Object):Promise<LocalCheckReport> {
+  interface Credentials {
+    userId: string
+    authToken: string
+  }
+
+  export function check(documentContent:string, credentials:Credentials):Promise<LocalCheckReport> {
     var checkCommandArguments:CheckCommandArguments = {
       text: documentContent,
-      language: 'EN-US'
+      language: 'EN-US',
+      userId: credentials.userId,
+      authToken: credentials.authToken
     };
 
     return new Promise(resolve => {

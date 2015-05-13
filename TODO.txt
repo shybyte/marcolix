@@ -1,9 +1,4 @@
 Doing:
-    * Integrate with Marcolixa (API)
-        - Read Html [1:30]
-        - Show Title, Edit Title, Save BodyHtml and Title [1:30]
-        * Check authToken on server
-
 
 TODO:
     * Optimize Card Rendering / Expanded card
@@ -65,6 +60,12 @@ Done:
     * Hide Check Button (Should be easy to enable for debugging) [0:15]
     * Improve Styling [0:50]
         * Style Scroll-Bars
+    * Integrate with Marcolixa (API)
+        * Read Html [1:30]
+        * Show Title, Edit Title, Save BodyHtml and Title [1:30]
+        * Check authToken on server [0:45]
+        * Speedup authToken check on server (caching) [0:15]
+        * Use config from postMessage [0:20]
 
 Learned:
     * Test Performance (of libraries) early

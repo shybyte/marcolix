@@ -72,7 +72,7 @@ module marcolix {
       } else {
         console.log('Checking global...');
         this.lastText = currentText;
-        return service.check(currentText).then(this.onCheckResult);
+        return service.check(currentText, this.props.config.credentials).then(this.onCheckResult);
       }
 
     }
@@ -151,7 +151,7 @@ module marcolix {
 
 
   function main() {
-    var config = {
+    var DEBUG_CONFIG = {
       documentUrl: 'http://localhost:3000/api/documents/jJYTK3HbSgoSXGtD7',
       credentials: {
         userId: 'RdpHDmvx5yjCgN2bM',
@@ -159,7 +159,17 @@ module marcolix {
       }
     };
 
-    React.render(React.createElement(MainComponent, {config: config}), document.getElementById('app'));
+    function renderMainComponent(config) {
+      React.render(React.createElement(MainComponent, {config: config}), document.getElementById('app'));
+    }
+
+
+    window.addEventListener('message', (event) => {
+      renderMainComponent(event.data);
+    }, false);
+
+    renderMainComponent(DEBUG_CONFIG);
+
   }
 
   if (!window['isTestRunning']) {

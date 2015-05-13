@@ -7,15 +7,25 @@ var sharedUtils = require('../shared/shared-utils');
 import CheckReport = marcolix.CheckReport;
 import LocalCheckReport = marcolix.LocalCheckReport;
 
+var AUTH_TOKEN_VALIDATION_INTERVAL_MS = 60 * 1000;
+
 export function createClientConnection(socket:SocketIO.Socket) {
+  var userId:string;
+  var authToken:string;
+  var lastAuthTokenValidationTimeMs = 0;
+
   var currentText:string;
   var currentLanguage:string;
   var lastCheckReport:CheckReport;
 
-  socket.on('check', (checkCommand:marcolix.CheckCommandArguments, callback: (LocalCheckReport) => void) => {
+  socket.on('check', (checkCommand:marcolix.CheckCommandArguments, callback:(LocalCheckReport) => void) => {
+    userId = checkCommand.userId;
+    authToken = checkCommand.authToken;
     currentText = checkCommand.text;
     currentLanguage = checkCommand.language;
+
     checking.checkGlobal(checkCommand).done(checkReport => {
+      lastAuthTokenValidationTimeMs = Date.now();
       lastCheckReport = checkReport;
       var localCheckReport:LocalCheckReport = {
         newIssues: checkReport.issues,
@@ -27,18 +37,37 @@ export function createClientConnection(socket:SocketIO.Socket) {
 
   socket.on('checkLocal', (checkCommand:marcolix.LocalCheckCommandArguments, callback) => {
     currentText = utils.applyDiff(currentText, checkCommand.diff);
-    console.log('Checking local:', currentText);
-    checking.checkGlobal({text: currentText, language: currentLanguage}).done(checkReport => {
+    var isAuthTokenValidationNeeded = (Date.now() - lastAuthTokenValidationTimeMs) > AUTH_TOKEN_VALIDATION_INTERVAL_MS;
+    //console.log('Checking local:', currentText);
+
+    function onCheckDone(checkReport:CheckReport) {
       var localCheckReport = checking.createLocalCheckReport(checkCommand.diff, lastCheckReport, checkReport, 10);
-      console.log('localCheckReport: ',localCheckReport);
+      //console.log('localCheckReport: ', localCheckReport);
       var oldRemainingIssues = _.reject(lastCheckReport.issues, issue => _.contains(localCheckReport.removedIssueIDs, issue.id));
       var displacedOldRemainingIssues = sharedUtils.displaceIssues(oldRemainingIssues, checkCommand.diff);
       lastCheckReport = {
         issues: _.sortBy(displacedOldRemainingIssues.concat(localCheckReport.newIssues), (issue:Issue) => issue.range[0])
       };
-      console.log('issues: ',lastCheckReport.issues);
+      //console.log('issues: ', lastCheckReport.issues);
       callback(localCheckReport);
-    });
+    }
+
+    var globalCheckCommand = {
+      text: currentText,
+      language: currentLanguage,
+      userId: userId,
+      authToken: authToken
+    };
+
+    if (isAuthTokenValidationNeeded) {
+      checking.checkGlobal(globalCheckCommand).then(onCheckDone).done(() => {
+        lastAuthTokenValidationTimeMs = Date.now();
+      });
+    } else {
+      checking.checkGlobalUnSecured(globalCheckCommand).done(onCheckDone);
+    }
+
+
   });
 
 
