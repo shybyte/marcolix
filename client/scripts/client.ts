@@ -168,7 +168,13 @@ module marcolix {
       renderMainComponent(event.data);
     }, false);
 
-    renderMainComponent(DEBUG_CONFIG);
+    // if not in a iframe
+    if (window === window.parent) {
+      renderMainComponent(DEBUG_CONFIG);
+    } else {
+      window.parent.postMessage('marcolixEditorIsLoaded', '*');
+    }
+
 
   }
 
