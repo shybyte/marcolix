@@ -87,11 +87,11 @@ module marcolix {
     changePoll = Bacon.interval(10 * 1000, true)
     bodyChangeEventStream:Bacon.EventStream<any>
 
-    lastSavedDocument: MarcolixHtmlDocument = {
+    lastSavedDocument:MarcolixHtmlDocument = {
       title: '',
       html: ''
     }
-    lastSavedHtmlBeforeCleaning: string = ''
+    lastSavedHtmlBeforeCleaning:string = ''
 
     state = {
       isRefreshOfMarkingsNeeded: true,
@@ -133,6 +133,12 @@ module marcolix {
         this.lastSavedDocument = document;
         editableDiv.innerHTML = document.html;
         documentLoadedEventStream.push({});
+        if (document.title.trim() === '') {
+          var title = <HTMLElement> React.findDOMNode(this.refs['documentTitle']);
+          title.focus();
+        } else {
+          this.getEditableDiv().focus();
+        }
         this.setState({title: document.title});
       });
 
@@ -148,7 +154,7 @@ module marcolix {
 
     onAnyPossibleChange = () => {
       if (this.getEditableDiv().innerHTML !== this.lastSavedHtmlBeforeCleaning
-      || this.state.title !== this.lastSavedDocument.title) {
+        || this.state.title !== this.lastSavedDocument.title) {
         this.save();
       }
     }
@@ -249,7 +255,13 @@ module marcolix {
 
     render() {
       return div({className: 'editor'},
-        input({className: 'editorTitle', placeholder: 'Type your title', value: this.state.title, onChange: this.onChangeTitle}),
+        input({
+          className: 'editorTitle',
+          placeholder: 'Type your title',
+          value: this.state.title,
+          ref: 'documentTitle',
+          onChange: this.onChangeTitle
+        }),
         div({
           className: 'editorBody',
           contentEditable: true, ref: 'editableDiv', spellCheck: false,

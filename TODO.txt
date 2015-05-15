@@ -1,12 +1,18 @@
 Doing:
 
+
 TODO:
+    * Max Length for Title
+    * Try catch around markings bugs
+    * Dictionary
+    * Display number of issues
+    * Save number of issues to API
+    * Show Flesch Reading Ease
     * Optimize Card Rendering / Expanded card
     * Enable other languages
     * Prevent to flag around cursor when typing a new word
     * Improve splitIntoSentences
     * Fine tuning of Check as you type
-    * Show Flesch Reading Ease
     * Fixed wrong WHITESPACE_RULE (repeated whitespace) at end of text
     * Fix missing white space issues on sentence borders, caused by sentence segmentation
     * Show Number of words and check speed
@@ -66,6 +72,7 @@ Done:
         * Check authToken on server [0:45]
         * Speedup authToken check on server (caching) [0:15]
         * Use config from postMessage [0:20]
+    * Focus on title field when started if title field in empty [0:10]
 
 Learned:
     * Test Performance (of libraries) early
