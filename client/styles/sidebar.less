@@ -1,7 +1,19 @@
+@import "flexbox";
+
 .sidebar {
-  padding: 48px 0.5em 0.5em 0.5em;
-  overflow: auto;
+  padding: 0px 0.5em 0.5em 0.5em;
   width: 30%;
+  .flex-grow(@grow: 1);
+  .flex-display(flex);
+  .flex-direction(@direction: column);
+}
+
+.sidebar .sidebarHeader{
+  min-height: 38px;
+}
+
+.sidebar .issues {
+  overflow: auto;
 }
 
 .surface {
@@ -25,7 +37,7 @@
 
 .issue {
   margin-bottom: 1em;
-  padding: 0.5em;
+  padding: 0.5em 0;
   border-radius: 5px;
 }
 

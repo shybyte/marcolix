@@ -104,7 +104,11 @@ module marcolix {
         // title
         div({className: 'issueTitle', onClick: () => p.onClick(p.issue)},
           span({className: 'icons'},
-            span({className: 'addToDictionaryIcon', title:'Add to Dictionary', onClick: this.onClickAddToDictionary}, ''),
+            span({
+              className: 'addToDictionaryIcon',
+              title: 'Add to Dictionary',
+              onClick: this.onClickAddToDictionary
+            }, ''),
             span({className: 'openCloseIcon'}, '')
           ),
           span({className: 'surface'},
@@ -197,15 +201,17 @@ module marcolix {
         return div({className: 'sidebar'}, 'No Check Result YET!')
       }
       return div({className: 'sidebar'},
-        p.issues.map((issue) => IssueFac({
-          onClick: () => this.onClickIssue(issue),
-          onClickReplacement: this.props.onClickReplacement,
-          onClickAddToDictionary: this.props.onClickAddToDictionary,
-          issue: issue,
-          expanded: issue === p.selectedIssue,
-          key: issue.id,
-          ref: issue.id
-        }))
+        div({className: 'sidebarHeader'}, 'Issues: ' + p.issues.length),
+        div({className: 'issues'},
+          p.issues.map((issue) => IssueFac({
+            onClick: () => this.onClickIssue(issue),
+            onClickReplacement: this.props.onClickReplacement,
+            onClickAddToDictionary: this.props.onClickAddToDictionary,
+            issue: issue,
+            expanded: issue === p.selectedIssue,
+            key: issue.id,
+            ref: issue.id
+          })))
       );
     }
   }

@@ -2,9 +2,8 @@ Doing:
 
 
 TODO:
-    * Display number of issues
-    * Save number of issues to API
     * Show Flesch Reading Ease
+    * Save number of issues to API
     * Reduce size of local check requests
     * Optimize Card Rendering / Expanded card
     * Enable other languages
@@ -21,6 +20,7 @@ TODO:
     * Handle lost socket connection (e.g. currentText is null in check local)
     * Keyboard Navigation
     * Clean up code
+    * Clean up LocalCheckReport<->CheckReport Confusion
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -77,6 +77,7 @@ Done:
     * Max Length for Title [0:10]
     * Try catch around markings bugs [0:05]
     * Add to dictionary button [1:00]
+    * Display number of issues [0:10]
 
 Learned:
     * Test Performance (of libraries) early
