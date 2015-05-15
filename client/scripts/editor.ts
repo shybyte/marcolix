@@ -260,6 +260,7 @@ module marcolix {
           placeholder: 'Type your title',
           value: this.state.title,
           ref: 'documentTitle',
+          maxLength: 50,
           onChange: this.onChangeTitle
         }),
         div({
