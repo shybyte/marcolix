@@ -53,18 +53,18 @@ module marcolix {
     getEditor = () => (<EditorComponent> this.refs['editor'])
     getEditorText = () => this.getEditor().getText()
 
-    check = (force?:boolean):Promise<any> => {
+    check = (forceGlobalCheck?:boolean):Promise<any> => {
       console.log('Checking?');
       var time = Date.now();
       var currentText = this.getEditorText();
       //console.log('Current Text:', currentText.replace(/ /g, '_').replace(/\n/g, '\\n\n'));
       var endTime = Date.now();
       console.log('Time for TextExt:', endTime - time, currentText.split(/[\s\n]/).length);
-      if (!force && currentText === this.lastText) {
+      if (!forceGlobalCheck && currentText === this.lastText) {
         return new Promise(resolve => resolve());
       }
       this.isChecking.push(true);
-      if (this.lastText) {
+      if (!forceGlobalCheck && this.lastText) {
         console.log('Checking local...');
         var checkResultPromise = service.checkLocal(utils.simpleDiff(this.lastText, currentText));
         this.lastText = currentText;
@@ -72,9 +72,22 @@ module marcolix {
       } else {
         console.log('Checking global...');
         this.lastText = currentText;
-        return service.check(currentText, this.props.config.credentials).then(this.onCheckResult);
+        return service.check(currentText, this.props.config.credentials).then(this.onGlobalCheckResult);
       }
 
+    }
+
+    onGlobalCheckResult = (checkReport:LocalCheckReport) => {
+      var currentText = this.getEditorText();
+      var diff = utils.simpleDiff(this.lastText, currentText);
+      this.changeState((s:AppState) => {
+        s.checkReport = utils.set(checkReport, (cr:LocalCheckReport) => {
+          cr.removeAllOldIssues = true;
+        });
+        var newDisplacedIssues = sharedUtils.displaceIssues(checkReport.newIssues, diff);
+        s.issues = _.sortBy(newDisplacedIssues, (issue:Issue) => issue.range[0]);
+      });
+      this.isChecking.push(false);
     }
 
     onCheckResult = (checkReport:LocalCheckReport) => {
@@ -97,6 +110,12 @@ module marcolix {
       console.log('Click:', issue);
       this.changeState(s => {
         s.selectedIssue = issue;
+      });
+    }
+
+    onClickAddToDictionary = (issue:Issue) => {
+      service.addToDictionary(issue.surface).then(() => {
+        this.check(true);
       });
     }
 
@@ -142,6 +161,7 @@ module marcolix {
             selectedIssue: this.state.selectedIssue || this.state.issueUnderCursor,
             onClickIssue: this.onClickIssue,
             onClickReplacement: this.onClickReplacement,
+            onClickAddToDictionary: this.onClickAddToDictionary,
             ref: 'sidebar'
           })
         )
@@ -155,7 +175,7 @@ module marcolix {
       documentUrl: 'http://localhost:3000/api/documents/jJYTK3HbSgoSXGtD7',
       credentials: {
         userId: 'RdpHDmvx5yjCgN2bM',
-        authToken: 'E-PcNnQyHXu4lmdwCbng5YShOvPiNuhX7jQQaimeiGi'
+        authToken: 'jViDOLNQVx4how24sdA0Neul3srGheftcWZ58xVj9Tq'
       }
     };
 

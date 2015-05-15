@@ -36,5 +36,15 @@ module marcolix.service {
     });
   }
 
+  export function addToDictionary(text: string):Promise<boolean> {
+    var newDictionaryEntry:AddToDictionaryArguments = {text};
+
+    return new Promise(resolve => {
+      socket.emit('addToDictionary', newDictionaryEntry, result => {
+        resolve(result);
+      });
+    });
+  }
+
 
 }

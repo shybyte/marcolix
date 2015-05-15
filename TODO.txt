@@ -1,7 +1,7 @@
 Doing:
 
+
 TODO:
-    * Add to dictionary
     * Display number of issues
     * Save number of issues to API
     * Show Flesch Reading Ease
@@ -20,6 +20,7 @@ TODO:
     * Clean up memory after connection end
     * Handle lost socket connection (e.g. currentText is null in check local)
     * Keyboard Navigation
+    * Clean up code
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -75,6 +76,7 @@ Done:
     * Use Dictionary [0:40]
     * Max Length for Title [0:10]
     * Try catch around markings bugs [0:05]
+    * Add to dictionary button [1:00]
 
 Learned:
     * Test Performance (of libraries) early

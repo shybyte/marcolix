@@ -17,6 +17,7 @@ declare module marcolix {
   export interface LocalCheckReport {
     newIssues: Issue[]
     removedIssueIDs: string[]
+    removeAllOldIssues?: boolean
   }
 
 }

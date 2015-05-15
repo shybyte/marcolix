@@ -206,8 +206,13 @@ module marcolix {
         console.log('Refresh Markings ...');
         var time = Date.now();
         var savedSelection = rangy.saveSelection();
-        utils.removeMarkings(editableDiv, props.checkReport.removedIssueIDs);
+        if (props.checkReport.removeAllOldIssues) {
+          utils.removeAllMarkings(editableDiv);
+        } else {
+          utils.removeMarkings(editableDiv, props.checkReport.removedIssueIDs);
+        }
         addMarkings(editableDiv, props.checkReport.newIssues);
+
         if (savedSelection) {
           rangy.restoreSelection(savedSelection);
         }

@@ -9,6 +9,7 @@ module marcolix {
     issue: Issue
     onClick: (issue:Issue) => void
     onClickReplacement: (issue:Issue, index:number) => void
+    onClickAddToDictionary: (issue:Issue) => void
     expanded: boolean
   }
 
@@ -77,6 +78,10 @@ module marcolix {
       this.props.onClickReplacement(this.props.issue, replacementIndex);
     }
 
+    onClickAddToDictionary = () => {
+      this.props.onClickAddToDictionary(this.props.issue);
+    }
+
     render() {
       var p = this.props;
       var issue = this.props.issue;
@@ -98,7 +103,10 @@ module marcolix {
       return div({className: 'issue' + (p.expanded ? ' expanded' : ''), title: issue.message},
         // title
         div({className: 'issueTitle', onClick: () => p.onClick(p.issue)},
-          span({className: 'icons'}, span({className: 'openCloseIcon'}, '')),
+          span({className: 'icons'},
+            span({className: 'addToDictionaryIcon', title:'Add to Dictionary', onClick: this.onClickAddToDictionary}, ''),
+            span({className: 'openCloseIcon'}, '')
+          ),
           span({className: 'surface'},
             makeSuffixPrefixWhiteSpaceVisible(issue.surface)),
           issue.replacements.length > 0 ?
@@ -152,6 +160,7 @@ module marcolix {
     selectedIssue: Issue
     onClickIssue: (Isssue) => void
     onClickReplacement: (issue:Issue, index:number) => void
+    onClickAddToDictionary: (issue:Issue) => void
     ref?: string
   }
 
@@ -191,6 +200,7 @@ module marcolix {
         p.issues.map((issue) => IssueFac({
           onClick: () => this.onClickIssue(issue),
           onClickReplacement: this.props.onClickReplacement,
+          onClickAddToDictionary: this.props.onClickAddToDictionary,
           issue: issue,
           expanded: issue === p.selectedIssue,
           key: issue.id,

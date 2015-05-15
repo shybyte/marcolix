@@ -67,7 +67,13 @@ export function createClientConnection(socket:SocketIO.Socket) {
       checking.checkGlobalUnSecured(globalCheckCommand).done(onCheckDone);
     }
 
+  });
 
+
+  socket.on('addToDictionary', (newDictionaryEntry:marcolix.AddToDictionaryArguments, callback:(boolean) => void) => {
+    checking.addToDictionary(newDictionaryEntry, {userId: userId, authToken: authToken}).then(function (success) {
+      callback(success);
+    });
   });
 
 

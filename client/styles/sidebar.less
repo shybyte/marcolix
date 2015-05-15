@@ -61,14 +61,30 @@
   margin-right: 5px;
 }
 
+.issueTitle .addToDictionaryIcon {
+  width: 16px;
+  height: 16px;
+  background-image: url('../images/plus.png');
+  background-size: 16px 16px;
+  display: block;
+  opacity: 0.4;
+  transition: all 0.5s;
+  float: left;
+  &:hover {
+    opacity: 1;
+  }
+  margin-right: 10px;
+}
+
 .issueTitle .openCloseIcon {
+  float: right;
   width: 16px;
   height: 16px;
   background-image: url('../images/open.png');
   background-size: 16px 16px;
   transform: rotate(-0.25turn);
   display: block;
-  opacity: 0.5;
+  opacity: 0.4;
   transition: all 0.5s;
 }
 

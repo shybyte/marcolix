@@ -237,3 +237,22 @@ export function clearCache(req, res) {
 export function showCache(req, res) {
   res.json(cache);
 }
+
+export function addToDictionary(newDictionaryEntry:DictionaryEntry, credentials:marcolix.MarcolixCredentials):Promise<boolean> {
+  dictionaries[credentials.userId].push(newDictionaryEntry);
+  return request({
+    url: DICTIONARY_URL,
+    method: 'POST',
+    body: newDictionaryEntry,
+    json: true,
+    headers: {
+      'x-user-id': credentials.userId,
+      'x-auth-token': credentials.authToken,
+    }
+  }).then(function (result):any {
+    return true;
+  }, function (error) {
+    console.error('Error while trying to add dictionary entry: ', error);
+    return false
+  });
+}
