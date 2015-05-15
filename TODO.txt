@@ -1,7 +1,7 @@
 Doing:
 
 TODO:
-    * Try catch around markings bugs
+    * Add to dictionary
     * Display number of issues
     * Save number of issues to API
     * Show Flesch Reading Ease
@@ -74,6 +74,7 @@ Done:
     * Focus on title field when started if title field in empty [0:10]
     * Use Dictionary [0:40]
     * Max Length for Title [0:10]
+    * Try catch around markings bugs [0:05]
 
 Learned:
     * Test Performance (of libraries) early

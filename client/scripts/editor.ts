@@ -58,18 +58,22 @@ module marcolix {
     var rangyRange = rangy.createRange();
     var reversedIssues = utils.reverseArray(issues);
     reversedIssues.forEach((issue:Issue, i) => {
-      var prevIssue = reversedIssues[i - 1];
-      if (prevIssue && issue.range[1] >= prevIssue.range[0]) {
-        textMapping = utils.extractTextMapping(editableDiv);
-      }
-      var startPos = textMapping.domPositions[issue.range[0]];
-      var endPos = getEndPos(issue, textMapping.domPositions);
-      if (startPos && endPos) {
-        rangyRange.setStart(startPos.node, startPos.offset);
-        rangyRange.setEnd(endPos.node, endPos.offset);
-        addMarkingToRangyRange(rangyRange, issue.type, issue.id);
-      } else {
-        console.error('Illegal mapping for :', issue, startPos, endPos);
+      try {
+        var prevIssue = reversedIssues[i - 1];
+        if (prevIssue && issue.range[1] >= prevIssue.range[0]) {
+          textMapping = utils.extractTextMapping(editableDiv);
+        }
+        var startPos = textMapping.domPositions[issue.range[0]];
+        var endPos = getEndPos(issue, textMapping.domPositions);
+        if (startPos && endPos) {
+          rangyRange.setStart(startPos.node, startPos.offset);
+          rangyRange.setEnd(endPos.node, endPos.offset);
+          addMarkingToRangyRange(rangyRange, issue.type, issue.id);
+        } else {
+          console.error('Illegal mapping for :', issue, startPos, endPos);
+        }
+      } catch (error) {
+        console.error('Error while adding Markings', error);
       }
     });
   }
