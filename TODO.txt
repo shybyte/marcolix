@@ -1,13 +1,12 @@
 Doing:
 
-
 TODO:
     * Max Length for Title
     * Try catch around markings bugs
-    * Dictionary
     * Display number of issues
     * Save number of issues to API
     * Show Flesch Reading Ease
+    * Reduce size of local check requests
     * Optimize Card Rendering / Expanded card
     * Enable other languages
     * Prevent to flag around cursor when typing a new word
@@ -21,6 +20,7 @@ TODO:
     * Handle nested divs somehow (text extraction / markings, flatten?) (Needed anymore?)
     * Clean up memory after connection end
     * Handle lost socket connection (e.g. currentText is null in check local)
+    * Keyboard Navigation
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -73,6 +73,7 @@ Done:
         * Speedup authToken check on server (caching) [0:15]
         * Use config from postMessage [0:20]
     * Focus on title field when started if title field in empty [0:10]
+    * Use Dictionary [0:40]
 
 Learned:
     * Test Performance (of libraries) early

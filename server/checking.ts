@@ -22,6 +22,7 @@ import CheckReport = marcolix.CheckReport;
 import SimpleDiff = marcolix.SimpleDiff;
 
 var VALIDATE_TOKEN_URL = 'http://localhost:3000/api/token/validate';
+var DICTIONARY_URL = 'http://localhost:3000/api/dictionary';
 
 var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081'];
 //var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081', 'http://localhost:8082'];
@@ -31,6 +32,10 @@ var LANGUAGE_TOOL_SERVERS = ['http://localhost:8081'];
 interface Sentence {
   offset: number;
   text: string;
+}
+
+interface DictionaryEntry {
+  text: string
 }
 
 export interface IssueWithinSentence extends Issue {
@@ -43,6 +48,7 @@ interface JoinedSentence extends Sentence {
 }
 
 var cache = {};
+var dictionaries:{[index: string]: DictionaryEntry[]} = {};
 
 function makeCacheKey(language:string, text:string) {
   return language + ':' + text;
@@ -147,14 +153,16 @@ function cacheIssues(language:string, sentences:Sentence[], newIssues:IssueWithi
   });
 }
 
+
 export function checkGlobal(checkRequest:marcolix.CheckCommandArguments):Promise<marcolix.CheckReport> {
   return request({
-    url: VALIDATE_TOKEN_URL,
+    url: DICTIONARY_URL,
     headers: {
       'x-user-id': checkRequest.userId,
       'x-auth-token': checkRequest.authToken,
     }
   }).then(function (result):any {
+    dictionaries[checkRequest.userId] = JSON.parse(result[1]).dictionary;
     if (result[0].statusCode !== 200) {
       console.error('Not authenticated.');
       return {
@@ -168,6 +176,10 @@ export function checkGlobal(checkRequest:marcolix.CheckCommandArguments):Promise
       issues: []
     }
   });
+}
+
+function isInDictionary(userId:string, issue:Issue) {
+  return _.any(dictionaries[userId], (dictionaryEntry) => dictionaryEntry.text === issue.surface);
 }
 
 export function checkGlobalUnSecured(checkRequest:marcolix.CheckCommandArguments):Promise<marcolix.CheckReport> {
@@ -189,7 +201,7 @@ export function checkGlobalUnSecured(checkRequest:marcolix.CheckCommandArguments
     var allIssuesCleaned = map(allIssues, issue => {
       delete issue.sentence;
       issue.id = _.uniqueId();
-    });
+    }).filter((issue:Issue) => !isInDictionary(checkRequest.userId, issue));
     console.log('Time', Date.now() - startTime);
     return {issues: allIssuesCleaned};
   });
