@@ -54,7 +54,7 @@ function makeCacheKey(language:string, text:string) {
   return language + ':' + text;
 }
 
-function checkText(text:string, language:string, languageToolServerUrl:string = 'http://localhost:8081'):Promise<marcolix.CheckReport> {
+function checkText(text:string, language:string, languageToolServerUrl:string = 'http://localhost:8081'):Promise<marcolix.Issue[]> {
   return request({
     url: languageToolServerUrl,
     method: 'POST',
@@ -67,8 +67,7 @@ function checkText(text:string, language:string, languageToolServerUrl:string = 
     var checkReportXML = checkRequestResponse[1];
     return parseXML(checkReportXML)
   }).then(function (checkReportLanguageTool) {
-    var checkReport = convertCheckReport(checkReportLanguageTool);
-    return checkReport;
+    return convertCheckReport(checkReportLanguageTool);
   })
 }
 
@@ -119,9 +118,9 @@ function splitIntoPartitions(sentences:Sentence[]):Partition[] {
 function checkSentences(sentences:Sentence[], language:string):Promise<IssueWithinSentence[]> {
   var partitions = splitIntoPartitions(sentences);
   return Promise.all(partitions.map((p, i) => checkText(p.joinedText, language, LANGUAGE_TOOL_SERVERS[i])))
-    .then(function (checkReports:marcolix.CheckReport[]) {
-      return <IssueWithinSentence[]> _.flatten(checkReports.map((checkReport, partitionIndex) =>
-          fixIssueRanges(partitions[partitionIndex].joinedSentences, checkReport.issues)
+    .then(function (issuesArray:marcolix.Issue[][]) {
+      return <IssueWithinSentence[]> _.flatten(issuesArray.map((issues, partitionIndex) =>
+          fixIssueRanges(partitions[partitionIndex].joinedSentences, issues)
       ));
     }
   );
@@ -185,7 +184,7 @@ function isInDictionary(userId:string, issue:Issue) {
 export function checkGlobalUnSecured(checkRequest:marcolix.CheckCommandArguments):Promise<marcolix.CheckReport> {
   var startTime = Date.now();
   var language = checkRequest.language;
-  var text = checkRequest.text;
+  var text = checkRequest.text.replace('\u00A0', ' ');
   var sentencesTexts = nlp.splitIntoSentences(text);
   var sentences = getSentences(sentencesTexts);
   var sentencePartition = _.partition(sentences, s => cache[makeCacheKey(language, s.text)])
@@ -203,7 +202,10 @@ export function checkGlobalUnSecured(checkRequest:marcolix.CheckCommandArguments
       issue.id = _.uniqueId();
     }).filter((issue:Issue) => !isInDictionary(checkRequest.userId, issue));
     console.log('Time', Date.now() - startTime);
-    return {issues: allIssuesCleaned};
+    return {
+      statistics: nlp.calculateStatistics(text),
+      issues: allIssuesCleaned
+    };
   });
 }
 
@@ -224,6 +226,7 @@ export function createLocalCheckReport(diff:SimpleDiff, lastCheckReport:CheckRep
   var extendedInsertionRange = [diff.deletionRange[0] - rangeExtension, diff.deletionRange[0] + diff.insertionLength + rangeExtension];
   var removedIssues = lastCheckReport.issues.filter(issue => sharedUtils.isRangeOverlapping(issue.range, extendedDeletionRange));
   return {
+    statistics: currentCheckReport.statistics,
     newIssues: currentCheckReport.issues.filter(issue => sharedUtils.isRangeOverlapping(issue.range, extendedInsertionRange)),
     removedIssueIDs: removedIssues.map(issue => issue.id)
   }

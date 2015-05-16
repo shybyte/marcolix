@@ -86,19 +86,23 @@ describe('fixIssueRanges', function () {
 });
 
 describe('createLocalCheckReport', function () {
+  function mockCheckReport(issues: Issue[]) : CheckReport {
+    return {
+      statistics: null,
+      issues: issues
+    }
+  }
+
   it('new issue in the middle', function () {
     var simpleDiff:SimpleDiff = {
       deletionRange: [20, 20],
       insertionLength: 10,
       insertion: 'ErrorNew  '
     }
-    var lastCheckReport:CheckReport = {
-      issues: [simpleIssue('Error1', [10, 16]), simpleIssue('Error2', [20, 26])]
-    }
+    var lastCheckReport = mockCheckReport([simpleIssue('Error1', [10, 16]), simpleIssue('Error2', [20, 26])]);
+
     var newIssue = simpleIssue('ErrorNew', [20, 28]);
-    var currentCheckReport:CheckReport = {
-      issues: [simpleIssue('Error1', [10, 16]), newIssue, simpleIssue('Error2', [30, 36])]
-    }
+    var currentCheckReport = mockCheckReport([simpleIssue('Error1', [10, 16]), newIssue, simpleIssue('Error2', [30, 36])]);
 
     var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 0);
 
@@ -113,14 +117,9 @@ describe('createLocalCheckReport', function () {
       insertion: 'ErrorNew  '
     }
     var oldIssue = simpleIssue('ErrorOld', [20, 28]);
-    var lastCheckReport:CheckReport = {
-      issues: [simpleIssue('Error1', [10, 16]), oldIssue, simpleIssue('Error3', [30, 26])]
-    }
+    var lastCheckReport:CheckReport = mockCheckReport([simpleIssue('Error1', [10, 16]), oldIssue, simpleIssue('Error3', [30, 26])]);
     var newIssue = simpleIssue('ErrorNew', [20, 28]);
-    var currentCheckReport:CheckReport = {
-      issues: [simpleIssue('Error1', [10, 16]), newIssue, simpleIssue('Error3', [30, 36])]
-    }
-
+    var currentCheckReport:CheckReport = mockCheckReport([simpleIssue('Error1', [10, 16]), newIssue, simpleIssue('Error3', [30, 36])]);
     var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 0);
 
     assert.deepEqual(localCheckReport.newIssues, [newIssue]);
@@ -136,16 +135,11 @@ describe('createLocalCheckReport', function () {
     var oldIssueBefore = simpleIssue('Error1', [10, 16]);
     var oldIssue = simpleIssue('ErrorOld', [20, 28]);
     var oldIssueAfter = simpleIssue('Error3', [30, 26]);
-    var lastCheckReport:CheckReport = {
-      issues: [oldIssueBefore, oldIssue, oldIssueAfter]
-    }
+    var lastCheckReport = mockCheckReport([oldIssueBefore, oldIssue, oldIssueAfter]);
     var newIssueBefore = simpleIssue('Error1', [10, 16]);
     var newIssue = simpleIssue('ErrorNew', [20, 28]);
     var newIssueAfter = simpleIssue('Error3', [30, 36]);
-    var currentCheckReport:CheckReport = {
-      issues: [newIssueBefore, newIssue, newIssueAfter]
-    }
-
+    var currentCheckReport = mockCheckReport([newIssueBefore, newIssue, newIssueAfter]);
     var localCheckReport = checking.createLocalCheckReport(simpleDiff, lastCheckReport, currentCheckReport, 10);
     assert.deepEqual(localCheckReport.newIssues, [newIssueBefore, newIssue, newIssueAfter]);
     assert.deepEqual(localCheckReport.removedIssueIDs, [oldIssueBefore.id, oldIssue.id, oldIssueAfter.id]);

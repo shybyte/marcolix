@@ -17,25 +17,24 @@ function prependPrecedingWord(issue:Issue, error:languageTool.Error):Issue {
   return clonedIssue;
 }
 
-export function convertCheckReport(checkReportLanguageTool:languageTool.CheckReport):marcolix.CheckReport {
-  return {
-    issues: _.map(checkReportLanguageTool.matches.error, '$').map(function (error:languageTool.Error) {
-      var errorLength = parseInt(error.errorlength);
-      var offset = parseInt(error.offset);
-      var issue:marcolix.Issue = {
-        id: _.uniqueId(),
-        message: error.msg,
-        surface: error.context.substr(parseInt(error.contextoffset), errorLength),
-        replacements: error.replacements ? error.replacements.split('#') : [],
-        range: [offset, offset + errorLength],
-        type: error.locqualityissuetype,
-        ruleId: error.ruleId
-      };
-      if (startsWithWhiteSpace(issue.surface)) {
-        return prependPrecedingWord(issue, error);
-      } else {
-        return issue;
-      }
-    })
-  }
+export function convertCheckReport(checkReportLanguageTool:languageTool.CheckReport):Issue[] {
+  return _.map(checkReportLanguageTool.matches.error, '$').map(function (error:languageTool.Error) {
+    var errorLength = parseInt(error.errorlength);
+    var offset = parseInt(error.offset);
+    var issue:marcolix.Issue = {
+      id: _.uniqueId(),
+      message: error.msg,
+      surface: error.context.substr(parseInt(error.contextoffset), errorLength),
+      replacements: error.replacements ? error.replacements.split('#') : [],
+      range: [offset, offset + errorLength],
+      type: error.locqualityissuetype,
+      ruleId: error.ruleId
+    };
+    if (startsWithWhiteSpace(issue.surface)) {
+      return prependPrecedingWord(issue, error);
+    } else {
+      return issue;
+    }
+  })
+
 }

@@ -10,6 +10,17 @@
 
 .sidebar .sidebarHeader{
   min-height: 38px;
+  .flex-display(flex);
+  >*{
+    .flex-grow(@grow: 1);
+    text-align: center;
+    &:first-child {
+      text-align: left;
+    }
+    &:last-child {
+      text-align: right;
+    }
+  }
 }
 
 .sidebar .issues {

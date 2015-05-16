@@ -201,7 +201,11 @@ module marcolix {
         return div({className: 'sidebar'}, 'No Check Result YET!')
       }
       return div({className: 'sidebar'},
-        div({className: 'sidebarHeader'}, 'Issues: ' + p.issues.length),
+        div({className: 'sidebarHeader'},
+          div({},'Issues: ' + p.issues.length),
+          div({},'Words: ' + p.checkReport.statistics.wordCount),
+          div({},'Flesch: ' + p.checkReport.statistics.fleshReadingEase.toFixed(2))
+        ),
         div({className: 'issues'},
           p.issues.map((issue) => IssueFac({
             onClick: () => this.onClickIssue(issue),

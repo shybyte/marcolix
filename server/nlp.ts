@@ -1,18 +1,19 @@
 'use strict';
 
 import _ = require('lodash');
+import nlpCompromise = require("nlp_compromise")
 
 export function splitIntoSentences(text:string) {
   var sentenceRegExp = /[\s\S]*?(\.|$)/g;
-  var sentences : string[] = [];
-  var sentence : string;
+  var sentences:string[] = [];
+  var sentence:string;
   while ((sentence = sentenceRegExp.exec(text)[0])) {
     sentences.push(sentence);
   }
   return sentences;
 }
 
-export function splitIntoSentencesOrginal(text) {
+export function splitIntoSentencesOriginal(text:string):string[] {
   var abbrev, abbrevs, clean, i, sentences, tmp;
   tmp = text.split(/(\S.+?[.\?!])(?=\s+|$|")/g);
   sentences = [];
@@ -43,3 +44,24 @@ export function splitIntoSentencesOrginal(text) {
   }
   return clean;
 }
+
+function getSumOfSyllables(tokens:{text: string}[]) {
+  return _.sum(tokens.map(t => nlpCompromise.syllables(t.text).length));
+}
+
+export function fleshReadingEase(text:string):number {
+  return calculateStatistics(text).fleshReadingEase;
+}
+
+export function calculateStatistics(text:string):marcolix.TextStatistics {
+  var sentences = nlpCompromise.pos(text, {dont_combine: true}).sentences;
+  var totalWords = _.sum(sentences.map(s => s.tokens.length));
+  var totalSyllables = _.sum(sentences.map(s => getSumOfSyllables(s.tokens)));
+  return {
+    fleshReadingEase: 206.835 - 1.015 * (totalWords / sentences.length) - 84.6 * (totalSyllables / totalWords),
+    wordCount: totalWords
+  };
+}
+
+
+

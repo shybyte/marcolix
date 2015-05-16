@@ -3213,6 +3213,14 @@ declare module _ {
           thisArg?: any): [T[],T[]];
     }
 
+    //_.sum
+    interface LoDashStatic {
+        sum<T>(
+          collection: Array<T>,
+          callback?: ListIterator<T, boolean>,
+          thisArg?: any): number;
+    }
+
 
 
     //_.groupBy

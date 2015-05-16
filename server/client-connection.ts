@@ -28,6 +28,7 @@ export function createClientConnection(socket:SocketIO.Socket) {
       lastAuthTokenValidationTimeMs = Date.now();
       lastCheckReport = checkReport;
       var localCheckReport:LocalCheckReport = {
+        statistics: checkReport.statistics,
         newIssues: checkReport.issues,
         removedIssueIDs: []
       };
@@ -46,6 +47,7 @@ export function createClientConnection(socket:SocketIO.Socket) {
       var oldRemainingIssues = _.reject(lastCheckReport.issues, issue => _.contains(localCheckReport.removedIssueIDs, issue.id));
       var displacedOldRemainingIssues = sharedUtils.displaceIssues(oldRemainingIssues, checkCommand.diff);
       lastCheckReport = {
+        statistics: checkReport.statistics,
         issues: _.sortBy(displacedOldRemainingIssues.concat(localCheckReport.newIssues), (issue:Issue) => issue.range[0])
       };
       //console.log('issues: ', lastCheckReport.issues);

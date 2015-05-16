@@ -10,11 +10,18 @@ declare module marcolix {
     type: string
   }
 
+  export interface TextStatistics {
+    fleshReadingEase: number;
+    wordCount: number;
+  }
+
   export interface CheckReport {
+    statistics: TextStatistics;
     issues: Issue[]
   }
 
   export interface LocalCheckReport {
+    statistics: TextStatistics;
     newIssues: Issue[]
     removedIssueIDs: string[]
     removeAllOldIssues?: boolean
