@@ -38,7 +38,7 @@ module marcolix.service.document {
     function saveDocument(htmlDocument:MarcolixHtmlDocument):Promise<Object> {
       return reqwest({
         url: config.documentUrl,
-        method: 'PUT',
+        method: 'PATCH',
         headers: headers,
         data: htmlDocument
       });
