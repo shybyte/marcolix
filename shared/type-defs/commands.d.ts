@@ -6,6 +6,7 @@ declare module marcolix {
   }
 
   export interface CheckCommandArguments extends MarcolixCredentials{
+    documentUrl: string
     text: string
     language: string
   }

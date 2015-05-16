@@ -72,7 +72,7 @@ module marcolix {
       } else {
         console.log('Checking global...');
         this.lastText = currentText;
-        return service.check(currentText, this.props.config.credentials).then(this.onGlobalCheckResult);
+        return service.check(currentText, this.props.config.credentials,this.props.config.documentUrl).then(this.onGlobalCheckResult);
       }
 
     }

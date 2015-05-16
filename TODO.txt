@@ -1,7 +1,6 @@
 Doing:
 
 TODO:
-    * Save number of issues to API
     * Reduce size of local check requests
     * Optimize Card Rendering / Expanded card
     * Enable other languages
@@ -77,6 +76,7 @@ Done:
     * Add to dictionary button [1:00]
     * Display number of issues [0:10]
     * Show Flesch Reading Ease [2:30]
+    * Save number of issues to API [0:30]
 
 Learned:
     * Test Performance (of libraries) early

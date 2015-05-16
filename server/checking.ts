@@ -156,10 +156,7 @@ function cacheIssues(language:string, sentences:Sentence[], newIssues:IssueWithi
 export function checkGlobal(checkRequest:marcolix.CheckCommandArguments):Promise<marcolix.CheckReport> {
   return request({
     url: DICTIONARY_URL,
-    headers: {
-      'x-user-id': checkRequest.userId,
-      'x-auth-token': checkRequest.authToken,
-    }
+    headers: createCredentialsHeader(checkRequest)
   }).then(function (result):any {
     dictionaries[checkRequest.userId] = JSON.parse(result[1]).dictionary;
     if (result[0].statusCode !== 200) {
@@ -201,6 +198,7 @@ export function checkGlobalUnSecured(checkRequest:marcolix.CheckCommandArguments
       delete issue.sentence;
       issue.id = _.uniqueId();
     }).filter((issue:Issue) => !isInDictionary(checkRequest.userId, issue));
+    saveIssueCount(checkRequest, checkRequest.documentUrl, allIssuesCleaned.length);
     console.log('Time', Date.now() - startTime);
     return {
       statistics: nlp.calculateStatistics(text),
@@ -209,9 +207,29 @@ export function checkGlobalUnSecured(checkRequest:marcolix.CheckCommandArguments
   });
 }
 
+function createCredentialsHeader(credentials:marcolix.MarcolixCredentials) {
+  return {
+    'x-user-id': credentials.userId,
+    'x-auth-token': credentials.authToken,
+  };
+}
+
+function saveIssueCount(credentials:marcolix.MarcolixCredentials, documentUrl:string, issueCount:number) {
+  request({
+    url: documentUrl,
+    method: 'PATCH',
+    body: {issueCount: issueCount},
+    json: true,
+    headers: createCredentialsHeader(credentials)
+  }).catch((error) => {
+    console.error('Error while saving issue count: ', error);
+  });
+}
+
 
 export function checkRoute(req, res) {
   checkGlobal({
+    documentUrl: req.query.documentUrl || req.body.documentUrl,
     text: req.query.text || req.body.text,
     language: req.query.language || req.body.language,
     userId: req.headers['x-user-id'],
@@ -248,10 +266,7 @@ export function addToDictionary(newDictionaryEntry:DictionaryEntry, credentials:
     method: 'POST',
     body: newDictionaryEntry,
     json: true,
-    headers: {
-      'x-user-id': credentials.userId,
-      'x-auth-token': credentials.authToken,
-    }
+    headers: createCredentialsHeader(credentials)
   }).then(function (result):any {
     return true;
   }, function (error) {

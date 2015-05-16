@@ -10,6 +10,7 @@ import LocalCheckReport = marcolix.LocalCheckReport;
 var AUTH_TOKEN_VALIDATION_INTERVAL_MS = 60 * 1000;
 
 export function createClientConnection(socket:SocketIO.Socket) {
+  var documentUrl:string;
   var userId:string;
   var authToken:string;
   var lastAuthTokenValidationTimeMs = 0;
@@ -19,6 +20,7 @@ export function createClientConnection(socket:SocketIO.Socket) {
   var lastCheckReport:CheckReport;
 
   socket.on('check', (checkCommand:marcolix.CheckCommandArguments, callback:(LocalCheckReport) => void) => {
+    documentUrl = checkCommand.documentUrl;
     userId = checkCommand.userId;
     authToken = checkCommand.authToken;
     currentText = checkCommand.text;
@@ -55,6 +57,7 @@ export function createClientConnection(socket:SocketIO.Socket) {
     }
 
     var globalCheckCommand = {
+      documentUrl,
       text: currentText,
       language: currentLanguage,
       userId: userId,

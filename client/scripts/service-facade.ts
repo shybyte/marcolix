@@ -8,8 +8,9 @@ module marcolix.service {
     authToken: string
   }
 
-  export function check(documentContent:string, credentials:Credentials):Promise<LocalCheckReport> {
+  export function check(documentContent:string, credentials:Credentials, documentUrl: string):Promise<LocalCheckReport> {
     var checkCommandArguments:CheckCommandArguments = {
+      documentUrl,
       text: documentContent,
       language: 'EN-US',
       userId: credentials.userId,
