@@ -99,7 +99,8 @@ module marcolix {
 
     state = {
       isRefreshOfMarkingsNeeded: true,
-      title: ''
+      title: '',
+      documentLoaded: false
     }
 
     getEditableDiv() {
@@ -137,13 +138,15 @@ module marcolix {
         this.lastSavedDocument = document;
         editableDiv.innerHTML = document.html;
         documentLoadedEventStream.push({});
-        if (document.title.trim() === '') {
-          var title = <HTMLElement> React.findDOMNode(this.refs['documentTitle']);
-          title.focus();
-        } else {
-          this.getEditableDiv().focus();
-        }
-        this.setState({title: document.title});
+        this.setState({title: document.title, documentLoaded: true});
+        setTimeout(()=> {
+          if (document.title.trim() === '') {
+            var title = <HTMLElement> React.findDOMNode(this.refs['documentTitle']);
+            title.focus();
+          } else {
+            this.getEditableDiv().focus();
+          }
+        }, 100);
       });
 
       var editableDivDomNode = React.findDOMNode(this.refs['editableDiv']);
@@ -263,7 +266,7 @@ module marcolix {
     }
 
     render() {
-      return div({className: 'editor'},
+      return div({className: 'editor' + (this.state.documentLoaded ? '' : ' hidden')},
         input({
           className: 'editorTitle',
           placeholder: 'Type your title',

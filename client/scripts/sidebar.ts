@@ -198,7 +198,7 @@ module marcolix {
       var state = this.state;
 
       if (!p.checkReport) {
-        return div({className: 'sidebar'}, 'No Check Result YET!')
+        return div({className: 'sidebar'}, '')
       }
       return div({className: 'sidebar'},
         div({className: 'sidebarHeader'},
