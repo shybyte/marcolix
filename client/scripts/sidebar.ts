@@ -177,18 +177,19 @@ module marcolix {
 
     componentDidUpdate() {
       var selectedIssue = this.props.selectedIssue;
+      // Scroll to selected Issue
       if (selectedIssue) {
-        // refactor, similar to editor.ts
-        var sidebarEl = <HTMLElement> React.findDOMNode(this);
+        // TODO: refactor, similar to editor.ts
+        var issuesEl = <HTMLElement> React.findDOMNode(this.refs['issues']);
         var issueEl = <HTMLElement> React.findDOMNode(this.refs[selectedIssue.id]);
         if (!issueEl) {
           return;
         }
         var issueTop = issueEl.offsetTop;
-        var scrollTop = sidebarEl.scrollTop;
-        var sidebarHeight = sidebarEl.offsetHeight;
-        if ((issueTop < sidebarEl.scrollTop) || (issueTop > scrollTop + sidebarHeight)) {
-          sidebarEl.scrollTop = issueTop - Math.floor(sidebarHeight * 3 / 4);
+        var scrollTop = issuesEl.scrollTop;
+        var sidebarHeight = issuesEl.offsetHeight;
+        if ((issueTop < issuesEl.scrollTop) || (issueTop > scrollTop + sidebarHeight)) {
+          issuesEl.scrollTop = issueTop - Math.floor(sidebarHeight * 3 / 4);
         }
       }
     }
@@ -206,7 +207,7 @@ module marcolix {
           div({},'Words: ' + p.checkReport.statistics.wordCount),
           div({},'Flesch: ' + p.checkReport.statistics.fleshReadingEase.toFixed(2))
         ),
-        div({className: 'issues'},
+        div({className: 'issues', ref: 'issues'},
           p.issues.map((issue) => IssueFac({
             onClick: () => this.onClickIssue(issue),
             onClickReplacement: this.props.onClickReplacement,
