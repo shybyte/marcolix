@@ -1,11 +1,12 @@
 Doing:
 
 
+
+
 TODO:
-    * Fix Scroll to Issue in Sidebar Bug
-    * Reduce size of local check requests
+    * Prevent scrolling to current selected issue after local check
+    * Handle Bugs in calculateStatistics
     * Reduce size of save document requests
-    * Optimize Card Rendering / Expanded card
     * Enable other languages
     * Prevent to flag around cursor when typing a new word
     * Improve splitIntoSentences
@@ -21,6 +22,7 @@ TODO:
     * Keyboard Navigation
     * Clean up code
     * Clean up LocalCheckReport<->CheckReport Confusion
+    * Reduce size of local check requests [0:10] WON'T IMPLEMENT?
 
 Done:
     * Setup the project (package.json, Github, ...) [0:25]
@@ -81,6 +83,8 @@ Done:
     * Show Flesch Reading Ease [2:30]
     * Save number of issues to API [0:30]
     * Fix missing issue card border bug [0:10]
+    * Fix Scroll to Issue in Sidebar Bug [0:15]
+    * Optimize Card Rendering / Expanded card [2:45]
 
 Learned:
     * Test Performance (of libraries) early

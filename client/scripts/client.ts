@@ -72,7 +72,7 @@ module marcolix {
       } else {
         console.log('Checking global...');
         this.lastText = currentText;
-        return service.check(currentText, this.props.config.credentials,this.props.config.documentUrl).then(this.onGlobalCheckResult);
+        return service.check(currentText, this.props.config.credentials, this.props.config.documentUrl).then(this.onGlobalCheckResult);
       }
 
     }
@@ -80,6 +80,7 @@ module marcolix {
     onGlobalCheckResult = (checkReport:LocalCheckReport) => {
       var currentText = this.getEditorText();
       var diff = utils.simpleDiff(this.lastText, currentText);
+      //React.addons.Perf.start();
       this.changeState((s:AppState) => {
         s.checkReport = utils.set(checkReport, (cr:LocalCheckReport) => {
           cr.removeAllOldIssues = true;
@@ -87,6 +88,9 @@ module marcolix {
         var newDisplacedIssues = sharedUtils.displaceIssues(checkReport.newIssues, diff);
         s.issues = _.sortBy(newDisplacedIssues, (issue:Issue) => issue.range[0]);
       });
+      //React.addons.Perf.stop();
+      //React.addons.Perf.printInclusive(null);
+      //React.addons.Perf.printWasted(null);
       this.isChecking.push(false);
     }
 
@@ -172,10 +176,11 @@ module marcolix {
 
   function main() {
     var DEBUG_CONFIG = {
-      documentUrl: 'http://localhost:3000/api/documents/jJYTK3HbSgoSXGtD7',
+      //documentUrl: 'http://localhost:3000/api/documents/srJ6n7AuAiG2tmnXb', //short
+      documentUrl: 'http://localhost:3000/api/documents/jJYTK3HbSgoSXGtD7', //long
       credentials: {
         userId: 'RdpHDmvx5yjCgN2bM',
-        authToken: 'jViDOLNQVx4how24sdA0Neul3srGheftcWZ58xVj9Tq'
+        authToken: 't0fw0BetDhRSsVPf8uNDUqrLKOOeCeNcaVf1UHxSzU8'
       }
     };
 

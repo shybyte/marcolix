@@ -21,18 +21,26 @@ module marcolix {
     }
   }
 
+  function getRelatedTarget(event:React.SyntheticEvent) {
+    var mouseEvent = <MouseEvent> event.nativeEvent;
+    return <HTMLElement> mouseEvent.relatedTarget;
+  }
+
   class IssueComponent extends React.Component<IssueComponentProps,any> {
     state = {
-      isMouseOverReplacementInTitle: false,
-      isMouseOverReplacementPopup: false,
+      isReplacementPopupOpen: false,
       replacementPopupPositionLeft: 0,
-      replacementsInBodyMarginLeft: 0
+      replacementsInBodyMarginLeft: 0,
+      wasExpandedBefore: false
     }
 
 
-    componentWillReceiveProps = (nextProps:IssueComponentProps) => {
+    componentDidUpdate = () => {
       var issueBody = <HTMLElement> React.findDOMNode(this.refs['issueBody']);
-      if (nextProps.expanded) {
+      if (!issueBody) {
+        return;
+      }
+      if (this.props.expanded) {
         var issueBodyContent = <HTMLElement> React.findDOMNode(this.refs['issueBodyContent']);
         var bodyHeight = issueBodyContent.offsetHeight + 20;
         issueBody.style.maxHeight = bodyHeight + 'px';
@@ -42,9 +50,14 @@ module marcolix {
           var positionOfReplacementInTitleLeft = replacementInTitle.offsetLeft;
           this.setState({replacementsInBodyMarginLeft: positionOfReplacementInTitleLeft});
         }
-
       } else {
         issueBody.style.maxHeight = '0px';
+      }
+    }
+
+    componentWillReceiveProps = (nextProps:IssueComponentProps) => {
+      if (this.props.expanded && !nextProps.expanded) {
+        this.setState({wasExpandedBefore: true});
       }
     }
 
@@ -54,24 +67,26 @@ module marcolix {
       }
       var positionOfReplacementInTitleLeft = React.findDOMNode(this.refs['replacementInTitle'])['offsetLeft'];
       this.setState({
-        isMouseOverReplacementInTitle: true,
+        isReplacementPopupOpen: true,
         replacementPopupPositionLeft: positionOfReplacementInTitleLeft - 16
       });
     }
 
-    onMouseOutReplacementInTitle = () => {
-      this.setState({isMouseOverReplacementInTitle: false})
+    getReplacementPopupEl = () => <HTMLElement> React.findDOMNode(this.refs['replacementsPopup'])
+
+    onMouseOutReplacementInTitle = (event:React.SyntheticEvent) => {
+      if (getRelatedTarget(event) !== this.getReplacementPopupEl()) {
+        this.setState({isReplacementPopupOpen: false})
+      }
     }
 
-    onMouseOverReplacementPopup = () => {
-      this.setState({isMouseOverReplacementPopup: true})
+    onMouseOutReplacementPopup = (event) => {
+      var relatedTarget = getRelatedTarget(event);
+      var replacementPopupEl = this.getReplacementPopupEl();
+      if (!replacementPopupEl.contains(relatedTarget) && replacementPopupEl !== relatedTarget) {
+        this.setState({isReplacementPopupOpen: false});
+      }
     }
-
-    onMouseOutReplacementPopup = () => {
-      this.setState({isMouseOverReplacementPopup: false})
-    }
-
-    isReplacementPopupOpen = () => (this.state.isMouseOverReplacementInTitle || this.state.isMouseOverReplacementPopup)
 
     onClickReplacement = (event:Event, replacementIndex:number) => {
       event.stopPropagation();
@@ -80,6 +95,12 @@ module marcolix {
 
     onClickAddToDictionary = () => {
       this.props.onClickAddToDictionary(this.props.issue);
+    }
+
+    shouldComponentUpdate = (nextProps:IssueComponentProps, nextState) => {
+      var arePropsDifferent = (nextProps.issue != this.props.issue) || (nextProps.expanded != this.props.expanded);
+      var isStateDifferent = !_.isEqual(nextState, this.state);
+      return arePropsDifferent || isStateDifferent;
     }
 
     render() {
@@ -127,11 +148,10 @@ module marcolix {
             ) : null),
 
         // replacementsPopupContainer
-        issue.replacements.length > 1 ? div({className: 'replacementsPopupContainer'},
+        (issue.replacements.length > 1 && this.state.isReplacementPopupOpen) ? div({className: 'replacementsPopupContainer'},
           div({
-              className: 'replacementsPopup ' + ( this.isReplacementPopupOpen() ? 'open' : ''),
+              className: 'replacementsPopup ' + ( this.state.isReplacementPopupOpen ? 'open' : ''),
               ref: 'replacementsPopup',
-              onMouseOver: this.onMouseOverReplacementPopup,
               onMouseOut: this.onMouseOutReplacementPopup,
               style: {
                 left: this.state.replacementPopupPositionLeft
@@ -142,7 +162,7 @@ module marcolix {
         ) : null,
 
         // body
-        div({className: 'issueBody', ref: 'issueBody'},
+        (p.expanded || this.state.wasExpandedBefore) ? div({className: 'issueBody', ref: 'issueBody'},
           div({className: 'issueBodyContent', ref: 'issueBodyContent'},
             div({
                 style: {
@@ -152,7 +172,7 @@ module marcolix {
               renderReplacementsTail()),
             div({className: 'issueMessage'}, issue.message)
           )
-        )
+        ) : null
       );
     }
   }
@@ -194,18 +214,24 @@ module marcolix {
       }
     }
 
+
+    shouldComponentUpdate = (nextProps:SidebarProps, nextState) => (
+      (nextProps.checkReport != this.props.checkReport)
+      || (nextProps.issues != this.props.issues)
+      || (nextProps.selectedIssue != this.props.selectedIssue)
+    )
+
     render() {
       var p = this.props;
-      var state = this.state;
 
       if (!p.checkReport) {
         return div({className: 'sidebar'}, '')
       }
       return div({className: 'sidebar'},
         div({className: 'sidebarHeader'},
-          div({},'Issues: ' + p.issues.length),
-          div({},'Words: ' + p.checkReport.statistics.wordCount),
-          div({},'Flesch: ' + p.checkReport.statistics.fleshReadingEase.toFixed(2))
+          div({}, 'Issues: ' + p.issues.length),
+          div({}, 'Words: ' + p.checkReport.statistics.wordCount),
+          div({}, 'Flesch: ' + p.checkReport.statistics.fleshReadingEase.toFixed(2))
         ),
         div({className: 'issues', ref: 'issues'},
           p.issues.map((issue) => IssueFac({

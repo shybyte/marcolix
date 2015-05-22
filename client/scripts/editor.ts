@@ -137,6 +137,7 @@ module marcolix {
       this.props.documentServiceFacade.getDocument().then((document:MarcolixHtmlDocument) => {
         this.lastSavedDocument = document;
         editableDiv.innerHTML = document.html;
+        // editableDiv.textContent = _.repeat(_.repeat(longDummyText, 2) + _.repeat(issueFreeDummyText, 40) + _.repeat(textWithIssues, 2), 2); //500->120
         documentLoadedEventStream.push({});
         this.setState({title: document.title, documentLoaded: true});
         setTimeout(()=> {
