@@ -1,9 +1,6 @@
 Doing:
 
 
-
-
-
 TODO:
     * Prevent scrolling to current selected issue after local check
     * Reduce size of save document requests
@@ -86,6 +83,7 @@ Done:
     * Fix Scroll to Issue in Sidebar Bug [0:15]
     * Optimize Card Rendering / Expanded card [2:45]
     * Handle Bugs in calculateStatistics [0:05]
+    * Optimize statistics by caching [0:50]
 
 Learned:
     * Test Performance (of libraries) early

@@ -48,6 +48,7 @@ interface JoinedSentence extends Sentence {
 }
 
 var cache = {};
+var statsCache = {};
 var dictionaries:{[index: string]: DictionaryEntry[]} = {};
 
 function makeCacheKey(language:string, text:string) {
@@ -178,10 +179,25 @@ function isInDictionary(userId:string, issue:Issue) {
   return _.any(dictionaries[userId], (dictionaryEntry) => dictionaryEntry.text === issue.surface);
 }
 
+
+function calculateStatsCached(language:string, sentences:Sentence[]) {
+  var sentenceStats = sentences.map(sentence => {
+    var cacheKey = makeCacheKey(language, sentence.text);
+    if (statsCache[cacheKey]) {
+      return statsCache[cacheKey];
+    } else {
+      var simpleTextStatistics = nlp.calculateSimpleStatistics(sentence.text);
+      statsCache[cacheKey] = simpleTextStatistics;
+      return simpleTextStatistics;
+    }
+  });
+  return nlp.aggregateSentenceStatistics(sentenceStats);
+}
+
 export function checkGlobalUnSecured(checkRequest:marcolix.CheckCommandArguments):Promise<marcolix.CheckReport> {
   var startTime = Date.now();
   var language = checkRequest.language;
-  var text = checkRequest.text.replace('\u00A0', ' ');
+  var text = checkRequest.text.replace(/\u00A0/g, ' ');
   var sentencesTexts = nlp.splitIntoSentences(text);
   var sentences = getSentences(sentencesTexts);
   var sentencePartition = _.partition(sentences, s => cache[makeCacheKey(language, s.text)])
@@ -200,8 +216,10 @@ export function checkGlobalUnSecured(checkRequest:marcolix.CheckCommandArguments
     }).filter((issue:Issue) => !isInDictionary(checkRequest.userId, issue));
     saveIssueCount(checkRequest, checkRequest.documentUrl, allIssuesCleaned.length);
     console.log('Time', Date.now() - startTime);
+    var stats = calculateStatsCached(language, sentences);
+    console.log('Time including stats: ', Date.now() - startTime);
     return {
-      statistics: nlp.calculateStatistics(text),
+      statistics: stats,
       issues: allIssuesCleaned
     };
   });

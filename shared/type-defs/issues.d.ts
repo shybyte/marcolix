@@ -10,9 +10,14 @@ declare module marcolix {
     type: string
   }
 
-  export interface TextStatistics {
-    fleshReadingEase: number;
+  export interface SimpleTextStatistics {
+    sentenceCount: number;
+    syllableCount: number;
     wordCount: number;
+  }
+
+  export interface TextStatistics extends SimpleTextStatistics {
+    fleshReadingEase: number;
   }
 
   export interface CheckReport {

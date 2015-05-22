@@ -53,22 +53,47 @@ export function fleshReadingEase(text:string):number {
   return calculateStatistics(text).fleshReadingEase;
 }
 
-export function calculateStatistics(text:string):marcolix.TextStatistics {
+export function calculateSimpleStatistics(text:string):marcolix.SimpleTextStatistics {
   try {
     var sentences = nlpCompromise.pos(text, {dont_combine: true}).sentences;
     var totalWords = _.sum(sentences.map(s => s.tokens.length));
     var totalSyllables = _.sum(sentences.map(s => getSumOfSyllables(s.tokens)));
     return {
-      fleshReadingEase: 206.835 - 1.015 * (totalWords / sentences.length) - 84.6 * (totalSyllables / totalWords),
-      wordCount: totalWords
+      sentenceCount: sentences.length,
+      wordCount: totalWords,
+      syllableCount: totalSyllables,
     };
   } catch (error) {
-    console.log('Error while calculateStatistics', error);
+    console.log('Error while calculateSimpleStatistics', error);
+    var stupidWordCount = text.split(' ').length;
     return {
-      fleshReadingEase: 66,
-      wordCount: text.split(' ').length
+      sentenceCount: 1,
+      syllableCount: stupidWordCount,
+      wordCount: stupidWordCount
     }
   }
+}
+
+export function aggregateSentenceStatistics(simpleSentenceStats:marcolix.SimpleTextStatistics[]):marcolix.TextStatistics {
+  return calculateStatsFromSimpleStats({
+    wordCount: _.sum(simpleSentenceStats.map(s => s.wordCount)),
+    syllableCount: _.sum(simpleSentenceStats.map(s => s.syllableCount)),
+    sentenceCount: simpleSentenceStats.length,
+  });
+}
+
+export function calculateStatsFromSimpleStats(s:marcolix.SimpleTextStatistics):marcolix.TextStatistics {
+  return {
+    fleshReadingEase: 206.835 - 1.015 * (s.wordCount / s.sentenceCount) - 84.6 * (s.syllableCount / s.wordCount),
+    wordCount: s.wordCount,
+    syllableCount: s.syllableCount,
+    sentenceCount: s.sentenceCount,
+  };
+}
+
+
+export function calculateStatistics(text:string):marcolix.TextStatistics {
+  return calculateStatsFromSimpleStats(calculateSimpleStatistics(text));
 }
 
 
