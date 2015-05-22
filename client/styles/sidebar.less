@@ -3,15 +3,17 @@
 .sidebar {
   padding: 0px 0.5em 0.5em 0.5em;
   width: 30%;
+  min-width: 320px;
   .flex-grow(@grow: 1);
   .flex-display(flex);
   .flex-direction(@direction: column);
 }
 
-.sidebar .sidebarHeader{
+.sidebar .sidebarHeader {
+  padding: 0 1em;
   min-height: 38px;
   .flex-display(flex);
-  >*{
+  > * {
     .flex-grow(@grow: 1);
     text-align: center;
     &:first-child {
@@ -25,6 +27,7 @@
 
 .sidebar .issues {
   overflow: auto;
+  padding: 5px 10px 5px;
 }
 
 .surface {
@@ -48,7 +51,7 @@
 
 .issue {
   margin-bottom: 1em;
-  padding: 0.5em 0;
+  padding: 0.5em;
   border-radius: 5px;
 }
 
@@ -65,7 +68,6 @@
   transition: all 0.5s;
 }
 
-
 .issue:hover .issueTitle {
   border-bottom-color: #d0d0d0;
 }
@@ -74,7 +76,7 @@
   border-bottom-color: #a0a0a0;
 }
 
-.issue.expanded  {
+.issue.expanded {
   box-shadow: 1px 1px 8px #a0a0a0;
   background-color: #fbfbfb;
 }

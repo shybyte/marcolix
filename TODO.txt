@@ -1,7 +1,10 @@
 Doing:
 
+
 TODO:
+    * Fix Scroll to Issue in Sidebar Bug
     * Reduce size of local check requests
+    * Reduce size of save document requests
     * Optimize Card Rendering / Expanded card
     * Enable other languages
     * Prevent to flag around cursor when typing a new word
@@ -77,6 +80,7 @@ Done:
     * Display number of issues [0:10]
     * Show Flesch Reading Ease [2:30]
     * Save number of issues to API [0:30]
+    * Fix missing issue card border bug [0:10]
 
 Learned:
     * Test Performance (of libraries) early
