@@ -54,13 +54,21 @@ export function fleshReadingEase(text:string):number {
 }
 
 export function calculateStatistics(text:string):marcolix.TextStatistics {
-  var sentences = nlpCompromise.pos(text, {dont_combine: true}).sentences;
-  var totalWords = _.sum(sentences.map(s => s.tokens.length));
-  var totalSyllables = _.sum(sentences.map(s => getSumOfSyllables(s.tokens)));
-  return {
-    fleshReadingEase: 206.835 - 1.015 * (totalWords / sentences.length) - 84.6 * (totalSyllables / totalWords),
-    wordCount: totalWords
-  };
+  try {
+    var sentences = nlpCompromise.pos(text, {dont_combine: true}).sentences;
+    var totalWords = _.sum(sentences.map(s => s.tokens.length));
+    var totalSyllables = _.sum(sentences.map(s => getSumOfSyllables(s.tokens)));
+    return {
+      fleshReadingEase: 206.835 - 1.015 * (totalWords / sentences.length) - 84.6 * (totalSyllables / totalWords),
+      wordCount: totalWords
+    };
+  } catch (error) {
+    console.log('Error while calculateStatistics', error);
+    return {
+      fleshReadingEase: 66,
+      wordCount: text.split(' ').length
+    }
+  }
 }
 
 

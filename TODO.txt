@@ -3,9 +3,9 @@ Doing:
 
 
 
+
 TODO:
     * Prevent scrolling to current selected issue after local check
-    * Handle Bugs in calculateStatistics
     * Reduce size of save document requests
     * Enable other languages
     * Prevent to flag around cursor when typing a new word
@@ -85,6 +85,7 @@ Done:
     * Fix missing issue card border bug [0:10]
     * Fix Scroll to Issue in Sidebar Bug [0:15]
     * Optimize Card Rendering / Expanded card [2:45]
+    * Handle Bugs in calculateStatistics [0:05]
 
 Learned:
     * Test Performance (of libraries) early
