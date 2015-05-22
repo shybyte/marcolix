@@ -1,8 +1,8 @@
 Doing:
 
 
+
 TODO:
-    * Prevent scrolling to current selected issue after local check
     * Reduce size of save document requests
     * Enable other languages
     * Prevent to flag around cursor when typing a new word
@@ -84,6 +84,7 @@ Done:
     * Optimize Card Rendering / Expanded card [2:45]
     * Handle Bugs in calculateStatistics [0:05]
     * Optimize statistics by caching [0:50]
+    * Prevent scrolling to current selected issue after local check [0:15]
 
 Learned:
     * Test Performance (of libraries) early

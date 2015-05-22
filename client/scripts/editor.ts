@@ -196,6 +196,8 @@ module marcolix {
         var parent = el.parentNode;
         if (parent.dataset.id) {
           this.props.onCursorOverIssue(parent.dataset.id);
+        } else {
+          this.props.onCursorOverIssue(null);
         }
       }
     }
@@ -223,6 +225,7 @@ module marcolix {
         var endTime = Date.now();
         console.log('Time for Markings:', endTime - time);
         this.setState({isRefreshOfMarkingsNeeded: false});
+        this.checkForCursorChange();
       }
 
       if (props.selectedIssue) {

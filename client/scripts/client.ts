@@ -134,6 +134,11 @@ module marcolix {
 
     onCursorOverIssue = (issueId:string) => {
       this.changeState(s => {
+        if (!issueId) {
+          s.issueUnderCursor = null;
+          s.selectedIssue = null;
+          return;
+        }
         var issueUnderCursor = _.find(s.issues, s => s.id === issueId);
         if (issueUnderCursor) {
           s.issueUnderCursor = issueUnderCursor;
