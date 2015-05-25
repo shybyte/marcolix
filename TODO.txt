@@ -1,12 +1,10 @@
 Doing:
 
 
-
 TODO:
     * Reduce size of save document requests
     * Enable other languages
     * Prevent to flag around cursor when typing a new word
-    * Improve splitIntoSentences
     * Fine tuning of Check as you type
     * Fixed wrong WHITESPACE_RULE (repeated whitespace) at end of text
     * Fix missing white space issues on sentence borders, caused by sentence segmentation
@@ -31,7 +29,7 @@ Done:
     * Simple check from client (Check Button, Display JSON) [2:30]
     * Display results in unexpanded card [1:15]
     * Show replacement menu on mouse over first replacement [2:30]
-    * Switched server code to typescript and added shared source directory (1:00)
+    * Switched server code to typescript and added shared source directory [1:00]
     * Handle white spaces in begin of an issue by adding the preceding word [0:45]
     * Expand card [0:45]
     * Bug: Cards with no replacement does not expand [0:05]
@@ -85,6 +83,7 @@ Done:
     * Handle Bugs in calculateStatistics [0:05]
     * Optimize statistics by caching [0:50]
     * Prevent scrolling to current selected issue after local check [0:15]
+    * Improve splitIntoSentences [0:50]
 
 Learned:
     * Test Performance (of libraries) early

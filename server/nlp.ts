@@ -3,12 +3,48 @@
 import _ = require('lodash');
 import nlpCompromise = require("nlp_compromise")
 
+var ABBREVIATIONS = [
+  // honourifics
+  "jr", "mr", "mrs", "ms", "dr", "prof", "sr", "sen", "corp", "rep", "gov", "atty", "supt", "det", "rev", "col", "gen", "lt", "cmdr", "adm", "capt", "sgt", "cpl", "maj", "miss", "sir", "esq", "mstr", "phd", "adj", "adv", "asst", "bldg", "brig", "comdr", "hon", "messrs", "mlle", "mme", "op", "ord", "pvt", "reps", "res", "sens", "sfc", "surg",
+  // common abbreviations
+  "arc", "al", "ave", "blvd", "cl", "ct", "cres", "exp", "rd", "st", "dist", "mt", "ft", "fy", "hwy", "la", "pd", "pl", "plz", "tce", "vs", "etc", "esp", "llb", "md", "bl", "ma", "ba", "lit", "fl", "ex", "eg", "ie",
+  // places
+  "ala", "ariz", "ark", "cal", "calif", "col", "colo", "conn", "del", "fed", "fla", "ga", "ida", "ind", "ia", "kan", "kans", "ken", "ky", "la", "md", "mich", "minn", "mont", "neb", "nebr", "nev", "okla", "penna", "penn", "pa", "dak", "tenn", "tex", "ut", "vt", "va", "wash", "wis", "wisc", "wy", "wyo", "usafa", "alta", "ont", "que", "sask", "yuk", "bc",
+  // orgs
+  "dept", "univ", "assn", "bros", "inc", "ltd", "co", "corp",
+  // proper nouns with exclamation marks
+  "yahoo", "joomla", "jeopardy"
+];
+
+var ABBREVIATIONS_REGEXP = new RegExp("\\b(" + ABBREVIATIONS.join("|") + ")[.!?] ?$", "i");
+var ACRONYM_REGEXP = new RegExp("[ .][A-Z][.]?$", "i")
+
+function splitIntoChunks(text:string) {
+  var chunksRegExp = /[\s\S]*?([.!?]|$)/g;
+  var chunks:string[] = [];
+  var chunk;
+  while (chunk = chunksRegExp.exec(text)[0]) {
+    chunks.push(chunk);
+  }
+  return chunks;
+}
+
 export function splitIntoSentences(text:string) {
-  var sentenceRegExp = /[\s\S]*?(\.|$)/g;
   var sentences:string[] = [];
-  var sentence:string;
-  while ((sentence = sentenceRegExp.exec(text)[0])) {
-    sentences.push(sentence);
+  var partialSentence:string = '';
+  var chunks = splitIntoChunks(text);
+  chunks.forEach((chunk, i) => {
+    var sentence = partialSentence + chunk;
+    var nextChunk = chunks[i + 1];
+    if (sentence.match(ABBREVIATIONS_REGEXP) || sentence.match(ACRONYM_REGEXP) || (nextChunk && nextChunk.match(/^\S/))) {
+      partialSentence = sentence;
+    } else {
+      sentences.push(sentence);
+      partialSentence = '';
+    }
+  });
+  if (partialSentence) {
+    sentences.push(partialSentence);
   }
   return sentences;
 }

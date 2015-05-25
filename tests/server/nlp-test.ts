@@ -19,6 +19,27 @@ describe('splitIntoSentences', function () {
     assert.deepEqual(nlp.splitIntoSentences('I like it. Sentence 2'), ['I like it.', ' Sentence 2']);
     assert.deepEqual(nlp.splitIntoSentences('I like it. Sentence 2.'), ['I like it.', ' Sentence 2.']);
   });
+  it('Sentences ending with !', function () {
+    assert.deepEqual(nlp.splitIntoSentences('Do it! Now!'), ['Do it!', ' Now!']);
+  });
+  it('Sentences ending with ?', function () {
+    assert.deepEqual(nlp.splitIntoSentences('Really? Yes!'), ['Really?', ' Yes!']);
+  });
+  it('Don not split at abbreviations', function () {
+    assert.deepEqual(nlp.splitIntoSentences('Mr. Bush is stupid.'), ['Mr. Bush is stupid.']);
+  });
+  it('Don not split at acronyms', function () {
+    assert.deepEqual(nlp.splitIntoSentences('George W. Bush is stupid'), ['George W. Bush is stupid']);
+  });
+  it('Acronyms at text end.', function () {
+    assert.deepEqual(nlp.splitIntoSentences('This is the N.A.T.O.'), ['This is the N.A.T.O.']);
+  });
+  it('Numbers', function () {
+    assert.deepEqual(nlp.splitIntoSentences('I have 1.23 dollars'), ['I have 1.23 dollars']);
+  });
+  it('URLs', function () {
+    assert.deepEqual(nlp.splitIntoSentences('My website is www.sternenlaub.de'), ['My website is www.sternenlaub.de']);
+  });
 });
 
 describe('fleshReadingEase', function () {
