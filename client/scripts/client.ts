@@ -21,12 +21,14 @@ module marcolix {
   }
 
   interface MainComponentProps {
-    config: service.document.Config
+    documentServiceConfig: service.document.Config
+    dictionaryChangedNotificationEnabled: boolean
   }
 
   export class MainComponent extends React.Component<MainComponentProps,AppState> {
     isChecking = new Bacon.Bus()
     replaceEventBus = new Bacon.Bus()
+    dictionaryChangedEventBus = new Bacon.Bus()
     changePoll = Bacon.interval(10 * 1000, true)
     lastText = ''
 
@@ -48,6 +50,14 @@ module marcolix {
         .holdWhen(this.isChecking).throttle(100).onValue(() => {
           this.check();
         });
+      this.dictionaryChangedEventBus.holdWhen(this.isChecking).throttle(100).onValue(() => {
+        this.check(true);
+      });
+      window.addEventListener('message', (event) => {
+        if (event.data.command === 'dictionaryChanged') {
+          this.dictionaryChangedEventBus.push(true);
+        }
+      }, false);
     }
 
     getEditor = () => (<EditorComponent> this.refs['editor'])
@@ -72,7 +82,7 @@ module marcolix {
       } else {
         console.log('Checking global...');
         this.lastText = currentText;
-        return service.check(currentText, this.props.config.credentials, this.props.config.documentUrl).then(this.onGlobalCheckResult);
+        return service.check(currentText, this.props.documentServiceConfig.credentials, this.props.documentServiceConfig.documentUrl).then(this.onGlobalCheckResult);
       }
 
     }
@@ -119,7 +129,9 @@ module marcolix {
 
     onClickAddToDictionary = (issue:Issue) => {
       service.addToDictionary(issue.surface).then(() => {
-        this.check(true);
+        if (!this.props.dictionaryChangedNotificationEnabled) {
+          this.dictionaryChangedEventBus.push(true);
+        }
       });
     }
 
@@ -148,7 +160,7 @@ module marcolix {
     }
 
     getDocumentService() {
-      return service.document.createServiceFacade(this.props.config);
+      return service.document.createServiceFacade(this.props.documentServiceConfig);
     }
 
     render() {
@@ -181,21 +193,26 @@ module marcolix {
 
   function main() {
     var DEBUG_CONFIG = {
-      //documentUrl: 'http://localhost:3000/api/documents/srJ6n7AuAiG2tmnXb', //short
-      documentUrl: 'http://localhost:3000/api/documents/jJYTK3HbSgoSXGtD7', //long
-      credentials: {
-        userId: 'RdpHDmvx5yjCgN2bM',
-        authToken: 't0fw0BetDhRSsVPf8uNDUqrLKOOeCeNcaVf1UHxSzU8'
-      }
+      documentServiceConfig: {
+        //documentUrl: 'http://localhost:3000/api/documents/srJ6n7AuAiG2tmnXb', //short
+        documentUrl: 'http://localhost:3000/api/documents/jJYTK3HbSgoSXGtD7', //long
+        credentials: {
+          userId: 'RdpHDmvx5yjCgN2bM',
+          authToken: 't0fw0BetDhRSsVPf8uNDUqrLKOOeCeNcaVf1UHxSzU8'
+        }
+      },
+      dictionaryChangedNotificationEnabled: false
     };
 
     function renderMainComponent(config) {
-      React.render(React.createElement(MainComponent, {config: config}), document.getElementById('app'));
+      React.render(React.createElement(MainComponent, config), document.getElementById('app'));
     }
 
 
     window.addEventListener('message', (event) => {
-      renderMainComponent(event.data);
+      if (event.data.command === 'loadDocument') {
+        renderMainComponent(event.data);
+      }
     }, false);
 
     // if not in a iframe
