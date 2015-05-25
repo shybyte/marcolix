@@ -1,6 +1,5 @@
 Doing:
 
-
 TODO:
     * Reduce size of save document requests
     * Enable other languages
@@ -87,6 +86,7 @@ Done:
     * Fix flesh is null bug [0:05]
     * Recheck when dictionary changed [0:40]
     * Fixed word count bug [0:15]
+    * More space between card title and line [0:10]
 
 Learned:
     * Test Performance (of libraries) early

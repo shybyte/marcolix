@@ -76,7 +76,7 @@ module marcolix {
 
     onMouseOutReplacementInTitle = (event:React.SyntheticEvent) => {
       if (getRelatedTarget(event) !== this.getReplacementPopupEl()) {
-        this.setState({isReplacementPopupOpen: false})
+        this.setState({isReplacementPopupOpen: false});
       }
     }
 

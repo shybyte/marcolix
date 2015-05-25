@@ -55,13 +55,17 @@
   border-radius: 5px;
 }
 
+@issueTitleContentPaddingBottom: 4px;
+
 .issueTitle {
   border-bottom: 1px solid #f0f0f0;
   position: relative;
   cursor: pointer;
+  overflow: hidden;
 
   .replacement {
     display: inline-block;
+    padding-bottom: @issueTitleContentPaddingBottom;
   }
 
   transition: all 0.5s;
@@ -82,6 +86,7 @@
 
 .issueTitle .icons {
   float: right;
+  padding-bottom: @issueTitleContentPaddingBottom+2;
   margin-right: 5px;
 }
 
