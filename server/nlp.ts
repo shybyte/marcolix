@@ -120,7 +120,9 @@ export function aggregateSentenceStatistics(simpleSentenceStats:marcolix.SimpleT
 
 export function calculateStatsFromSimpleStats(s:marcolix.SimpleTextStatistics):marcolix.TextStatistics {
   return {
-    fleshReadingEase: 206.835 - 1.015 * (s.wordCount / s.sentenceCount) - 84.6 * (s.syllableCount / s.wordCount),
+    fleshReadingEase: (s.sentenceCount > 0 && s.wordCount > 0)
+      ? 206.835 - 1.015 * (s.wordCount / s.sentenceCount) - 84.6 * (s.syllableCount / s.wordCount)
+      : 0,
     wordCount: s.wordCount,
     syllableCount: s.syllableCount,
     sentenceCount: s.sentenceCount,

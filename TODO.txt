@@ -1,6 +1,5 @@
 Doing:
 
-
 TODO:
     * Reduce size of save document requests
     * Enable other languages
@@ -84,6 +83,7 @@ Done:
     * Optimize statistics by caching [0:50]
     * Prevent scrolling to current selected issue after local check [0:15]
     * Improve splitIntoSentences [0:50]
+    * Fix flesh is null bug [0:05]
 
 Learned:
     * Test Performance (of libraries) early
