@@ -55,4 +55,9 @@ describe('calculateStatistics', function () {
     var stats = nlp.calculateStatistics('It contains another text.');
     assert.equal(stats.wordCount, 4);
   });
+
+  it('White space', function () {
+    var stats = nlp.calculateStatistics('   ');
+    assert.equal(stats.wordCount, 0);
+  });
 });

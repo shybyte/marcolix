@@ -86,6 +86,7 @@ Done:
     * Improve splitIntoSentences [0:50]
     * Fix flesh is null bug [0:05]
     * Recheck when dictionary changed [0:40]
+    * Fixed word count bug [0:15]
 
 Learned:
     * Test Performance (of libraries) early

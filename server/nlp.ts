@@ -91,7 +91,7 @@ export function fleshReadingEase(text:string):number {
 
 export function calculateSimpleStatistics(text:string):marcolix.SimpleTextStatistics {
   try {
-    var sentences = nlpCompromise.pos(text, {dont_combine: true}).sentences;
+    var sentences = nlpCompromise.pos(text.replace(/\s/g,' '), {dont_combine: true}).sentences;
     var totalWords = _.sum(sentences.map(s => s.tokens.length));
     var totalSyllables = _.sum(sentences.map(s => getSumOfSyllables(s.tokens)));
     return {
@@ -100,8 +100,9 @@ export function calculateSimpleStatistics(text:string):marcolix.SimpleTextStatis
       syllableCount: totalSyllables,
     };
   } catch (error) {
-    console.log('Error while calculateSimpleStatistics', error);
-    var stupidWordCount = text.split(' ').length;
+    console.log('Error while calculateSimpleStatistics', text, error);
+    text = text || '';
+    var stupidWordCount = text.trim().split(/\s+/).filter(t => !!t).length;
     return {
       sentenceCount: 1,
       syllableCount: stupidWordCount,
