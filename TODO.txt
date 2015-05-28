@@ -87,6 +87,7 @@ Done:
     * Recheck when dictionary changed [0:40]
     * Fixed word count bug [0:15]
     * More space between card title and line [0:10]
+    * Add funky issue card transition [0:05]
 
 Learned:
     * Test Performance (of libraries) early
