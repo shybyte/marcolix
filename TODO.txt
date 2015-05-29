@@ -1,8 +1,6 @@
 Doing:
 
 TODO:
-    * Fix space before issue at sentence begin bug
-    * Add color to style flags
     * Reduce size of save document requests
     * Enable other languages
     * Prevent to flag around cursor when typing a new word
@@ -91,6 +89,7 @@ Done:
     * More space between card title and line [0:10]
     * Add funky issue card transition [0:05]
     * Fix space before issue at sentence begin bug [0:10]
+    * Add color to style flags [0:05]
 
 
 Learned:
