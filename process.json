@@ -1,0 +1,15 @@
+{
+  "apps": [
+    {
+      "name": "marcolix",
+      "script": ".tmp/compiled/server/server.js",
+      "post_update": [
+        "echo App has been updated, running npm install and grunt...",
+        "npm install",
+        "grunt build:prod",
+        "echo App is being restarted now"
+      ],
+      "exec_timeout": 30000
+    }
+  ]
+}
