@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node .tmp/compiled/server/server.js"
+    "start": "node .tmp/compiled/server/server.js",
+    "post_update": ["npm install","grunt build:prod"]
   },
   "dependencies": {
     "express": "~4.12.2",
