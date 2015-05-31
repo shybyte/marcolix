@@ -194,11 +194,11 @@ module marcolix {
   function main() {
     var DEBUG_CONFIG = {
       documentServiceConfig: {
-        //documentUrl: 'http://localhost:3000/api/documents/srJ6n7AuAiG2tmnXb', //short
-        documentUrl: 'http://localhost:3000/api/documents/jJYTK3HbSgoSXGtD7', //long
+        documentUrl: 'http://localhost:3000/api/documents/srJ6n7AuAiG2tmnXb', //short
+        //documentUrl: 'http://localhost:3000/api/documents/jJYTK3HbSgoSXGtD7', //long
         credentials: {
           userId: 'RdpHDmvx5yjCgN2bM',
-          authToken: 't0fw0BetDhRSsVPf8uNDUqrLKOOeCeNcaVf1UHxSzU8'
+          authToken: 'EzpP-1Q5UkWWSMqTkfjdJNzVYzy4cqUoaXK1PnIJR57'
         }
       },
       dictionaryChangedNotificationEnabled: false

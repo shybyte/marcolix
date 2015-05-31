@@ -88,6 +88,7 @@ module marcolix {
   export class EditorComponent extends React.Component<EditorProps,any> {
     isSaving = new Bacon.Bus()
     titleChangedEventStream = new Bacon.Bus()
+    replacementEventStream = new Bacon.Bus()
     changePoll = Bacon.interval(10 * 1000, true)
     bodyChangeEventStream:Bacon.EventStream<any>
 
@@ -155,7 +156,7 @@ module marcolix {
       var cut = Bacon.fromEvent(editableDivDomNode, 'cut');
       var paste = Bacon.fromEvent(editableDivDomNode, 'paste');
       var keyPressed = Bacon.fromEvent(editableDivDomNode, 'keypress');
-      this.bodyChangeEventStream = Bacon.mergeAll([input, cut, paste, keyPressed, documentLoadedEventStream]);
+      this.bodyChangeEventStream = Bacon.mergeAll([input, cut, paste, keyPressed, documentLoadedEventStream, this.replacementEventStream]);
       this.bodyChangeEventStream.merge(this.titleChangedEventStream).debounce(500).merge(this.changePoll)
         .holdWhen(this.isSaving).throttle(100).onValue(this.onAnyPossibleChange);
     }
@@ -261,6 +262,7 @@ module marcolix {
       var markingNodes = this.getMarkingNodes(issue);
       if (markingNodes.length > 0) {
         setRangeText(markingNodes, issue.replacements[replacementIndex]);
+        this.replacementEventStream.push(true);
       }
     }
 

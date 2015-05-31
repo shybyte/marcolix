@@ -1,6 +1,8 @@
 Doing:
 
+
 TODO:
+    * Remove marking when pressing enter to avoid splitted
     * Reduce size of save document requests
     * Enable other languages
     * Prevent to flag around cursor when typing a new word
@@ -90,6 +92,7 @@ Done:
     * Add funky issue card transition [0:05]
     * Fix space before issue at sentence begin bug [0:10]
     * Add color to style flags [0:05]
+    * Fix bug: no immediate save after replacement 0:10
 
 
 Learned:
